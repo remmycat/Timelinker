@@ -1,0 +1,33 @@
+$bisexual-pink: rgb(255, 0, 128);
+$bisexual-purple: rgb(163, 73, 164);
+$bisexual-blue: rgb(36, 116, 209);
+
+$pride-red: rgb(231, 0, 0);
+$pride-orange: rgb(255, 140, 0);
+$pride-yellow: rgb(255, 239, 0);
+$pride-green: rgb(0, 129, 31);
+$pride-blue: rgb(0, 68, 255);
+$pride-purple: rgb(118, 0, 137);
+
+$ace-black: rgb(0, 0, 0);
+$ace-grey: rgb(163, 163, 163);
+$ace-white: rgb(255, 255, 255);
+$ace-purple: rgb(128, 0, 128);
+
+$trans-blue: rgb(91, 206, 250);
+$trans-pink: rgb(245, 169, 184);
+$trans-white: $ace-white;
+
+$aro-black: rgb(0, 0, 0);
+$aro-green: rgb(59, 166, 63);
+$aro-lime: rgb(168, 212, 122);
+$aro-white: $ace-white;
+$aro-grey: $ace-grey;
+$aro-black: $ace-black;
+
+$blue-gradient: radial-gradient(circle at 30% 10%, #4b6cb7 0%, #182848 100%);
+$green-gradient: radial-gradient(
+    circle at 5vw 5vh,
+    darken($aro-lime, 30%) 0%,
+    darken($aro-green, 30%) 100%
+);

@@ -1,0 +1,106 @@
+@import 'src/colours';
+
+$colorTransitionLength: 0.1s;
+
+.list {
+    flex: 1 1 0;
+}
+
+.presetWrap {
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.knob {
+    margin: 4px 4px 4px -4px;
+    height: 8px;
+    width: 8px;
+    border-radius: 100%;
+    background-color: rgba($ace-white, 0.5);
+    border: 2px solid rgba($bisexual-pink, 0);
+    background-clip: padding-box;
+    transition: border-color $colorTransitionLength;
+
+    &:active,
+    &:focus,
+    &:hover {
+        border-color: $bisexual-pink;
+        outline: none;
+        & + .preset {
+            border-color: $bisexual-pink;
+            outline: none;
+        }
+    }
+}
+
+.preset {
+    height: 30px;
+    border-radius: 30px;
+    padding: 2px 7px 2px 10px;
+    background: $ace-white;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba($bisexual-pink, 0);
+    background-clip: padding-box;
+    transition: border-color $colorTransitionLength;
+    cursor: pointer;
+
+    &:focus-within {
+        border: 2px solid $bisexual-pink;
+        outline: none;
+    }
+}
+
+.icon {
+    width: 20px;
+    height: auto;
+}
+
+.url {
+    flex: 1 1 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    margin: 0 5px;
+    font-size: 0.85rem;
+}
+
+.remove {
+    transition: color colorTransitionLength;
+    width: 1.3rem;
+
+    &:hover {
+        color: $pride-red;
+    }
+}
+
+.submitButton {
+    transition: color $colorTransitionLength;
+
+    &:hover {
+        color: $bisexual-pink;
+    }
+}
+
+.input {
+    composes: url;
+    border: none;
+    text-align: left;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.hr {
+    border: none;
+    border-top: 1px solid rgba($ace-white, 0.2);
+    margin: 15px 25%;
+}

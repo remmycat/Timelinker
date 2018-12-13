@@ -1,0 +1,13 @@
+@mixin cover($speed, $borderDistance: 0) {
+    position: absolute;
+    left: $borderDistance;
+    top: $borderDistance;
+    right: $borderDistance;
+    bottom: $borderDistance;
+    opacity: 0;
+    transition: opacity $speed ease-out;
+}
+
+@mixin showCover() {
+    opacity: 1;
+}

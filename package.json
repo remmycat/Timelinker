@@ -1,0 +1,80 @@
+{
+    "name": "timelinker",
+    "productName": "Timelinker",
+    "author": {
+        "name": "Remmy Stock"
+    },
+    "version": "1.0.0-alpha.1",
+    "license": "UNLICENSED",
+    "description": "A Social Timeline Column-Browser",
+    "keywords": [],
+    "main": "electron/main.js",
+    "homepage": "./",
+    "build": {
+        "appId": "com.electron.timelinker",
+        "files": [
+            "build/**/*",
+            "electron/**/*"
+        ],
+        "extends": null,
+        "directories": {
+            "buildResources": "electron/assets"
+        }
+    },
+    "dependencies": {
+        "cross-env": "^5.2.0",
+        "electron-dl": "^1.12.0",
+        "electron-is-dev": "^1.0.1",
+        "electron-store": "^2.0.0",
+        "electron-util": "^0.10.2",
+        "uuid": "^3.3.2",
+        "npm-run-all": "^4.1.3"
+    },
+    "devDependencies": {
+        "@types/classnames": "^2.2.6",
+        "@types/electron-store": "^1.3.0",
+        "@types/react": "16.7.6",
+        "@types/react-beautiful-dnd": "^7.1.2",
+        "@types/react-dom": "16.0.9",
+        "@types/uuid": "^3.4.4",
+        "@types/wcag-contrast": "^2.1.0",
+        "classnames": "^2.2.6",
+        "electron": "^3.0.10",
+        "electron-builder": "^20.38.3",
+        "electron-devtools-installer": "^2.2.4",
+        "electron-reloader": "^0.2.0",
+        "eslint-plugin-prettier": "^3.0.0",
+        "node-sass": "^4.10.0",
+        "prepend-http": "^2.0.0",
+        "prettier": "^1.15.2",
+        "prop-types": "^15.6.2",
+        "react": "16.7.0-alpha.2 - next",
+        "react-beautiful-dnd": "^10.0.2",
+        "react-dom": "16.7.0-alpha.2 - next",
+        "react-feather": "^1.1.4",
+        "react-scripts": "2.1.1",
+        "react-spring": "^7.0.0",
+        "typescript": "3.1.6",
+        "typescript-eslint-parser": "^21.0.1",
+        "wait-port": "^0.2.2",
+        "wcag-contrast": "^2.1.1"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test --env=jsdom",
+        "electron:main": "wait-port 3000 && electron .",
+        "electron:cra": "cross-env BROWSER=none npm run start",
+        "dev": "run-p -r electron:*",
+        "prod": "cross-env TIMELINKER_PROD_TEST=true electron .",
+        "dist": "cross-env GENERATE_SOURCEMAP=false npm run build && electron-builder",
+        "dist:all": "cross-env GENERATE_SOURCEMAP=false npm run build && electron-builder -mwl",
+        "dist:pack": "cross-env GENERATE_SOURCEMAP=false npm run build && electron-builder --dir"
+    },
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
+    ]
+}

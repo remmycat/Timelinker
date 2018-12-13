@@ -1,0 +1,112 @@
+@import 'src/colours';
+@import 'src/mixins';
+
+$sidebarWidth: 66px;
+$panelWidth: 300px;
+$sidebarPadding: 8px;
+$iconSize: 30px;
+
+.wrap {
+    width: $sidebarWidth;
+    box-sizing: border-box;
+    padding: $sidebarPadding;
+
+    &::after {
+        @include cover(0.3s);
+        pointer-events: none;
+        content: '';
+        bottom: unset;
+        right: unset;
+        width: 100vw;
+        height: 100vh;
+        z-index: 75;
+        background-color: rgba($ace-black, 0.4);
+    }
+}
+
+.wrap__panelOpen {
+    &::after {
+        @include showCover();
+        pointer-events: initial;
+    }
+}
+
+.button {
+    color: rgba($ace-white, 0.8);
+    margin: 13px 0;
+    width: $iconSize;
+    height: $iconSize;
+
+    &:hover {
+        color: $ace-white;
+    }
+
+    &:active {
+        color: $pride-orange;
+    }
+
+    > * {
+        width: 100%;
+        height: 100%;
+        stroke-width: 1.4px;
+    }
+}
+
+.button__active {
+    color: rgba($pride-orange, 0.9);
+
+    &:hover {
+        color: $pride-orange;
+    }
+}
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: $sidebarWidth;
+    box-sizing: border-box;
+    padding: $sidebarPadding;
+
+    z-index: 80;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.panel {
+    position: fixed;
+    padding: $sidebarPadding;
+    width: $panelWidth;
+    height: 100%;
+    box-sizing: border-box;
+    pointer-events: none;
+    transition: transform 0.3s;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    z-index: 81;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    background: $green-gradient;
+}
+
+.panelContent {
+    flex: 1 1 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel__visible {
+    pointer-events: unset;
+    transform: unset;
+    // important to not have transform set when visible, otherwise DnD breaks!
+}
+
+.panelCloseButton {
+    align-self: right;
+}

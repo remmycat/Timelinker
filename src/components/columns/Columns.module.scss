@@ -1,0 +1,185 @@
+@import 'src/colours';
+@import 'src/mixins';
+
+$headerHeight: 32px;
+$titleMargin: 8px + 28px; // add traffic light width
+$spacerWidth: 4px;
+$borderRadius: 8px;
+$focusBorderWidth: 2px;
+$controlModeAnim: 0.3s;
+$actionRowPadding: 8px;
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 0;
+    position: relative;
+    overflow: visible;
+    white-space: nowrap;
+
+    margin-left: -($spacerWidth / 2);
+    margin-right: -($spacerWidth / 2);
+}
+
+.wrap {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0;
+    width: 0;
+    margin: 0 ($spacerWidth / 2);
+}
+
+.spacer {
+    // spacer elements are not allowed to have actual width for DnD
+    // so i hacked them in by modifying .wrap and .row
+    min-width: $spacerWidth;
+    margin-left: -($spacerWidth / 2);
+    margin-right: -($spacerWidth / 2);
+    height: 100%;
+    background: 5px rgba($ace-white, 0.125);
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex: 1 1 0;
+    transform-origin: 50% 50%;
+    transition: transform $controlModeAnim ease-out;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    overflow: hidden;
+    position: relative;
+    background: radial-gradient(
+        circle at 10% 0%,
+        lighten($trans-pink, 15%) 0%,
+        lighten($trans-blue, 25%) 100%
+    );
+}
+
+.dragCover {
+    @include cover($controlModeAnim);
+    pointer-events: none;
+    border-radius: $borderRadius;
+    box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56);
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.6);
+
+    &:active,
+    &:focus {
+        box-shadow: 0 0 0 2px $bisexual-pink, 0 22px 70px 4px rgba(0, 0, 0, 0.56);
+        outline: none;
+    }
+}
+
+.contentCover {
+    @include cover($controlModeAnim);
+    pointer-events: none;
+    border-radius: $borderRadius;
+    overflow: hidden;
+}
+
+.column__controlMode {
+    transform: scale(0.92);
+    pointer-events: none;
+
+    .content {
+        border-radius: $borderRadius;
+    }
+
+    .contentCover {
+        @include showCover();
+
+        .actionRow {
+            pointer-events: initial;
+        }
+    }
+    .dragCover {
+        @include showCover();
+        pointer-events: initial;
+    }
+}
+
+.controls {
+    color: $ace-black;
+    background: radial-gradient(
+        circle at 10% 0%,
+        lighten($trans-pink, 16%) 0%,
+        lighten($trans-blue, 16%) 100%
+    );
+}
+
+.header {
+    min-height: $headerHeight;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    min-width: 0;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.title {
+    background-color: transparent;
+
+    position: relative;
+    flex: 1 1 0;
+
+    font-size: 1.1rem;
+    font-weight: normal;
+    text-align: center;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    pointer-events: none;
+
+    margin: 0 8px;
+    border: none;
+}
+
+.actionRow {
+    display: flex;
+    flex-direction: row;
+    padding: $actionRowPadding;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+    > .action__right:first-child,
+    > .action + .action__right {
+        flex: 1 1 0;
+
+        align-items: flex-end;
+    }
+}
+
+.action {
+    margin: 0 3px;
+    opacity: 0.9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    > * {
+        pointer-events: initial;
+    }
+
+    &:hover,
+    &:active {
+        opacity: 1;
+    }
+
+    &:disabled {
+        cursor: default;
+        opacity: 0.4;
+    }
+}
