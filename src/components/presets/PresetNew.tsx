@@ -27,7 +27,11 @@ export default function PresetNew({ onAdd }: Props) {
 
     const handleKeyPress = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key === 'Enter') submit();
+            if (e.key === 'Enter') {
+                e.stopPropagation();
+                e.preventDefault();
+                submit();
+            }
         },
         [submit]
     );

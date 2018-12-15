@@ -1,4 +1,4 @@
-import useTransformers, { Transform } from '../../hooks/useTransformers'; //eslint-disable-line
+import useTransformers, { Transform } from '../../hooks/useTransformers';
 
 /* eslint-disable no-unused-vars */
 export enum SidebarState {

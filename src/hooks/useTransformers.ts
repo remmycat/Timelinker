@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, SetStateAction } from 'react'; //eslint-disable-line
+import React, { useState, useMemo, useRef, SetStateAction, useEffect } from 'react';
 
 type AnyFunction = (...args: any[]) => any;
 type ArgType<T extends AnyFunction> = T extends (...args: infer A) => any ? A : any;
@@ -23,22 +23,19 @@ export default function useTransformers<State, T extends TransformerObject<State
     const didChange = state === ref.current;
     ref.current = state;
 
-    const setStatePersist = (a: React.SetStateAction<State>) => {
-        if (persist) persist(a);
-        return setState(a);
-    };
-
     const boundTransformers: Dispatchers<State, T> = useMemo(
         () =>
             Object.keys(transformers).reduce((acc: any, key) => {
                 // @ts-ignore (probably typable, but not worth it)
                 acc[key] = (...args) => {
-                    return setStatePersist(transformers[key](...args));
+                    return setState(transformers[key](...args));
                 };
                 return acc;
             }, {}),
         [transformers]
     );
+
+    useEffect(() => persist && persist(state), [persist, state]);
 
     return [state, boundTransformers, ref, didChange];
 }

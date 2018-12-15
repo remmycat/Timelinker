@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import styles from './Preset.module.scss';
-import { Preset as PresetType } from './PresetState'; //eslint-disable-line
+import { Preset as PresetType } from './PresetState';
 import { X } from 'react-feather';
 import clickfocus from '../../util/clickfocus';
 import { Draggable } from 'react-beautiful-dnd';

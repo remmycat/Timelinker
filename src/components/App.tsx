@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import useTransformers, { Transform } from '../hooks/useTransformers'; //eslint-disable-line
-import usePresetState, { Preset as PresetType } from './presets/PresetState'; //eslint-disable-line
+import React, { useState, useCallback, useMemo } from 'react';
+import useTransformers, { Transform } from '../hooks/useTransformers';
+import usePresetState, { Preset as PresetType } from './presets/PresetState';
 import useSidebarState, { SidebarState } from './sidebar/SidebarState';
 import { PlusCircle, Grid } from 'react-feather';
 import useColumnState from './columns/ColumnState';
@@ -36,6 +36,7 @@ export default function App() {
     const [presets, presetDis] = usePresetState();
     const [mode, sidebarActions] = useSidebarState(columns.length);
     const [webviews, { addWebview }] = useTransformers(WebviewTransformers, {} as WebviewState);
+    const desktopUserAgent = useMemo(() => navigator.userAgent, []);
 
     const setupMode = mode === SidebarState.setupColumn;
     const controlMode = mode === SidebarState.control;
@@ -61,13 +62,14 @@ export default function App() {
             <ColumnControls
                 webview={webviews[id]}
                 id={id}
-                columns={columnsRef}
+                column={columns.find(c => c.id === id)!}
                 columnDispatchers={columnDis}
                 presetDispatchers={presetDis}
                 setFullscreen={setFullscreen}
+                desktopUserAgent={desktopUserAgent}
             />
         ),
-        [webviews, columnDis, presetDis, setFullscreen]
+        [webviews, columnDis, presetDis, setFullscreen, columns]
     );
 
     return (
@@ -107,6 +109,8 @@ export default function App() {
                             renderControls={renderControls}>
                             <BrowserView
                                 addWebview={addWebview}
+                                mobile={column.mobileSite}
+                                desktopUserAgent={desktopUserAgent}
                                 url={column.url}
                                 id={column.id}
                                 key={column.id}

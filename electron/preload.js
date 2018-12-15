@@ -1,9 +1,13 @@
-const remote = require('electron').remote;
+const { remote, webFrame } = require('electron');
+const ElectronStore = remote.require('electron-store');
+const { API, SpaceStore, SharedStore, SpaceId } = remote.getCurrentWindow().injected;
 
-const injected = remote.getCurrentWindow().injected;
-Object.keys(injected).forEach(key => {
-    window[key] = injected[key];
-});
+window.API = API;
+window.SpaceId = SpaceId;
+window.SpaceStore = new ElectronStore(SpaceStore);
+window.SharedStore = new ElectronStore(SharedStore);
+
+window.Logs = {};
 
 const ResizeObserver = window.ResizeObserver;
 window.ResizeObserver = class MonkeyPatchedResizeObserver extends ResizeObserver {

@@ -3483,6 +3483,14 @@ electron-builder@^20.38.3:
     update-notifier "^2.5.0"
     yargs "^12.0.5"
 
+electron-context-menu@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/electron-context-menu/-/electron-context-menu-0.10.1.tgz#9e202f1f65c0972cca8c0ef2047a13a100770368"
+  integrity sha512-KFkKwFbT6iJUgarEknYuXQlJAT+naJZtSWFBtHf9RiSb70wscWdDNpYoUERzF7FgqYE1Mil4npfRWsjqGLwtog==
+  dependencies:
+    electron-dl "^1.2.0"
+    electron-is-dev "^1.0.1"
+
 electron-devtools-installer@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/electron-devtools-installer/-/electron-devtools-installer-2.2.4.tgz#261a50337e37121d338b966f07922eb4939a8763"
@@ -3493,7 +3501,7 @@ electron-devtools-installer@^2.2.4:
     rimraf "^2.5.2"
     semver "^5.3.0"
 
-electron-dl@^1.12.0:
+electron-dl@^1.12.0, electron-dl@^1.2.0:
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/electron-dl/-/electron-dl-1.12.0.tgz#328c7f12d3e458ed4ddc773d8ffc28d59ab35d2e"
   integrity sha512-UMc2CL45Ybpvu66LDPYzwmDRmYK4Ivz+wdnTM0eXcNMztvQwhixAk2UPme1c7McqG8bAlKEkQpZn3epmQy4EWg==
@@ -3787,6 +3795,13 @@ eslint-plugin-react@7.11.1:
     has "^1.0.3"
     jsx-ast-utils "^2.0.1"
     prop-types "^15.6.2"
+
+eslint-plugin-typescript@^0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-typescript/-/eslint-plugin-typescript-0.14.0.tgz#068549c3f4c7f3f85d88d398c29fa96bf500884c"
+  integrity sha512-2u1WnnDF2mkWWgU1lFQ2RjypUlmRoBEvQN02y9u+IL12mjWlkKFGEBnVsjs9Y8190bfPQCvWly1c2rYYUSOxWw==
+  dependencies:
+    requireindex "~1.1.0"
 
 eslint-scope@3.7.1:
   version "3.7.1"
@@ -9229,6 +9244,11 @@ require-uncached@^1.0.3:
   dependencies:
     caller-path "^0.1.0"
     resolve-from "^1.0.0"
+
+requireindex@~1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/requireindex/-/requireindex-1.1.0.tgz#e5404b81557ef75db6e49c5a72004893fe03e162"
+  integrity sha1-5UBLgVV+91225JxacgBIk/4D4WI=
 
 requires-port@^1.0.0:
   version "1.0.0"

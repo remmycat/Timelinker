@@ -18,7 +18,28 @@ function newSpace() {
     return {
         id: uuid(),
         bounds: { width: 800, height: 600 },
+        isMaximized: false,
+        isMinimized: false,
+        isFullScreen: false,
     };
+}
+
+function saveWindowState(win, id) {
+    return AppStore.update('last-opened', (old = []) =>
+        old.map(space => {
+            if (space.id !== id) return space;
+            const isMax = win.isMaximized();
+            const isFull = win.isFullScreen();
+            const isMin = win.isMinimized();
+            return {
+                ...space,
+                bounds: isMax | isFull | isMin ? space.bounds : win.getBounds(),
+                isMaximized: isMax,
+                isMinimized: isMin,
+                isFullscreen: isFull,
+            };
+        })
+    );
 }
 
 function addSpace() {
@@ -31,16 +52,19 @@ function getSpaces() {
 
 function remoteAPI(id) {
     return {
-        SpaceId: id,
-        AppStore,
-        SpaceStore: new ElectronStore({
+        SharedStore: {
+            cwd: storagePath,
+            name: 'shared',
+        },
+        SpaceStore: {
             cwd: spacePath,
             name: id,
-        }),
+        },
     };
 }
 
 module.exports = {
     remoteAPI,
     getSpaces,
+    saveWindowState,
 };

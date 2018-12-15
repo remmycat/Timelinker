@@ -98,11 +98,19 @@ $actionRowPadding: 8px;
         .actionRow {
             pointer-events: initial;
         }
+
+        .action > * {
+            pointer-events: initial;
+        }
     }
     .dragCover {
         @include showCover();
         pointer-events: initial;
     }
+}
+
+.column__individual__controlMode {
+    transform: initial;
 }
 
 .controls {
@@ -141,19 +149,26 @@ $actionRowPadding: 8px;
 
     pointer-events: none;
 
-    margin: 0 8px;
+    margin: 0 28px; // leave room for close icon
     border: none;
+}
+
+.close {
+    position: absolute;
+    right: 0;
 }
 
 .actionRow {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row;
+    align-items: center;
     padding: $actionRowPadding;
     background-color: rgba(0, 0, 0, 0.05);
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 
     > .action__right:first-child,
-    > .action + .action__right {
+    > .action:not(.action__right) + .action__right {
         flex: 1 1 0;
 
         align-items: flex-end;
@@ -167,11 +182,7 @@ $actionRowPadding: 8px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    pointer-events: none;
-
-    > * {
-        pointer-events: initial;
-    }
+    pointer-events: none; // children will be set by column, see above
 
     &:hover,
     &:active {
@@ -181,5 +192,11 @@ $actionRowPadding: 8px;
     &:disabled {
         cursor: default;
         opacity: 0.4;
+    }
+
+    &.action__small {
+        height: 18px;
+        width: 18px;
+        margin: 0 2px;
     }
 }

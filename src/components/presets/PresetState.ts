@@ -1,5 +1,5 @@
-import useTransformers, { Transform, Dispatchers } from '../../hooks/useTransformers'; //eslint-disable-line
-import { useAppStore } from '../../hooks/usePersistentState';
+import useTransformers, { Transform, Dispatchers } from '../../hooks/useTransformers';
+import useAppStore from '../../hooks/useSharedStore';
 import UUID from 'uuid/v4';
 
 export type Preset = {
@@ -11,20 +11,26 @@ export type Preset = {
 
 export type PresetState = Preset[];
 
-// const defaultSites = ['https://mobile.twitter.com'];
+const defaultSites = [
+    'https://mobile.twitter.com',
+    'https://m.facebook.com',
+    'https://instagram.com',
+    'https://tumblr.com',
+    'https://youtube.com',
+];
 
 export const defaultSuggestion = 'mastodon.social';
 
-// const getNewPreset = (url: string, isDefault: boolean, favicons?: string[]) => ({
-//     id: UUID(),
-//     url,
-//     isDefault,
-//     favicons,
-// });
+const getNewPreset = (url: string, isDefault: boolean, favicons?: string[]) => ({
+    id: UUID(),
+    url,
+    isDefault,
+    favicons,
+});
 
 type Trans = Transform<PresetState>;
 
-// const defaultState: PresetState = defaultSites.map(site => getNewPreset(site, true));
+const defaultState: PresetState = defaultSites.map(site => getNewPreset(site, true));
 
 const PresetTransformers = {
     updateFavicons(presetId: string, favicons: string[]): Trans {
@@ -70,6 +76,6 @@ const PresetTransformers = {
 export type PresetDispatchers = Dispatchers<PresetState, typeof PresetTransformers>;
 
 export default function usePresetState() {
-    const [initialState, saveState] = useAppStore('presets');
+    const [initialState, saveState] = useAppStore('presets', defaultState);
     return useTransformers(PresetTransformers, initialState, saveState);
 }

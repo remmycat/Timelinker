@@ -1,26 +1,56 @@
-import Store from 'electron-store'; //eslint-disable-line
-import { PresetState } from './presets/PresetState'; //eslint-disable-line
-import { ColumnState } from './columns/ColumnState'; //eslint-disable-line
+import Store from 'electron-store';
+import { WebContents } from 'electron';
+import { PresetState } from './presets/PresetState';
+import { ColumnState } from './columns/ColumnState';
 
 declare global {
-    interface ElectronStore<T> extends Store<T> {
-        update<K extends keyof T>(key: K, updater: (old: T[K]) => T[K]): T[K];
-    }
-    type AppState = {
+    interface ElectronStore<T> extends Store<T> {}
+    type SharedState = {
         presets: PresetState;
     };
     type SpaceState = {
         columns: ColumnState;
     };
-    type AppStore = ElectronStore<AppState>;
+    type SharedStore = ElectronStore<SharedState>;
     type SpaceStore = ElectronStore<SpaceState>;
 
     interface Window {
-        SpaceId: string;
         SpaceStore: SpaceStore;
-        AppStore: AppStore;
+        SharedStore: SharedStore;
         API: {
             openURL: (url: string) => boolean;
+            resetChildZoomBoundaries: () => void;
+        };
+        Metadata: {
+            SpaceId: string;
+        };
+        Logs: {
+            [key: string]: undefined | Array<[number, string]>;
         };
     }
+
+    interface HTMLWebViewElement {
+        send: (channel: string, ...args: any[]) => undefined;
+        getWebContents: () => WebContents;
+    }
+
+    // interface NewWindowEvent extends UIEvent {
+    //     readonly url: string;
+    // }
+
+    // interface FaviconChangeEvent extends UIEvent {
+    //     readonly favicons: string[];
+    // }
+
+    // interface TitleChangeEvent extends UIEvent {
+    //     readonly title: string;
+    //     readonly explicitSet: boolean;
+    // }
+
+    // interface ConsoleEvent extends UIEvent {
+    //     readonly level: number;
+    //     readonly message: string;
+    //     readonly line: number;
+    //     readonly sourceId: string;
+    // }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import PresetNew from './PresetNew';
-import { Droppable, DragDropContext, DragDropContextProps } from 'react-beautiful-dnd'; //eslint-disable-line
+import { Droppable, DragDropContext, DragDropContextProps } from 'react-beautiful-dnd';
 import styles from './Preset.module.scss';
 
 type Props = {

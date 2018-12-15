@@ -1,11 +1,18 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react';
-import { WebContents } from 'electron'; // eslint-disable-line
+import {
+    WebContents,
+    ConsoleMessageEvent,
+    PageFaviconUpdatedEvent,
+    NewWindowEvent,
+    PageTitleUpdatedEvent,
+    webContents,
+} from 'electron';
 import useContrastColor from '../../hooks/useContrastColor';
-import { X, RefreshCw, Home, Trash, ArrowLeft, ArrowRight } from 'react-feather';
+import { X, RefreshCw, Home, XCircle, ArrowLeft, ArrowRight, ZoomIn, ZoomOut } from 'react-feather';
 import stopPropagation from '../../util/stopPropagation';
 import ActionIcon from './ActionIcon';
-import { ColumnState, ColumnDispatchers } from './ColumnState'; // eslint-disable-line
-import { PresetDispatchers } from '../presets/PresetState'; // eslint-disable-line
+import { Column, ColumnDispatchers } from './ColumnState';
+import { PresetDispatchers } from '../presets/PresetState';
 import useNodeListener from '../../hooks/useNodeListener';
 import useDomListener from '../../hooks/useDomListener';
 import styles from './Columns.module.scss';
@@ -14,38 +21,33 @@ type Props = {
     id: string;
     webview?: HTMLWebViewElement;
     columnDispatchers: ColumnDispatchers;
-    columns: React.MutableRefObject<ColumnState>;
+    column: Column;
     setFullscreen: React.Dispatch<React.SetStateAction<undefined | string>>;
     presetDispatchers: PresetDispatchers;
+    desktopUserAgent: string;
 };
 
-interface NewWindowEvent extends UIEvent {
-    readonly url: string;
-}
+const browser_zoomLevel = 0;
+const browser_maxZoom = 9;
+const browser_minZoom = -8;
 
-interface FaviconChangeEvent extends UIEvent {
-    readonly favicons: string[];
-}
-
-interface TitleChangeEvent extends UIEvent {
-    readonly title: string;
-    readonly explicitSet: boolean;
-}
+const mobileUserAgent = `Mozilla/5.0 (Linux; Android 9; Pixel Build/PPR2.181005.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/70.0.3538.80 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/196.0.0.41.95;]`;
 
 export default function ColumnControls({
     id,
     webview,
     columnDispatchers,
-    columns,
+    column,
     presetDispatchers,
     setFullscreen,
+    desktopUserAgent,
 }: Props) {
-    const { updateFavicons } = presetDispatchers;
-
     const webContents = useMemo<WebContents | undefined>(
-        () => webview && (webview as any).getWebContents(),
+        () => webview && webview.getWebContents(),
         [webview]
     );
+
+    const zoomLevel = column.zoomLevel || browser_zoomLevel;
 
     // Initial states are a guess, but it doesn't really matter:
     // The buttons are disabled until state is initialized anyway.
@@ -62,11 +64,12 @@ export default function ColumnControls({
                 setGoBack(webContents.canGoBack());
                 setGoForward(webContents.canGoForward());
                 setTitle(webContents.getTitle());
+                console.log('setting', zoomLevel);
+                webContents.setZoomLevel(zoomLevel);
             }
         },
-        [webContents]
+        [webContents, zoomLevel]
     );
-
     useEffect(refreshState, [webContents]);
 
     useNodeListener<'did-start-loading'>(webContents, 'did-start-loading', () => {
@@ -75,8 +78,10 @@ export default function ColumnControls({
     useNodeListener<'did-stop-loading'>(webContents, 'did-stop-loading', () => {
         setLoading(false);
     });
-    useNodeListener<'did-navigate'>(webContents, 'did-navigate', refreshState);
-    useNodeListener<'did-navigate-in-page'>(webContents, 'did-navigate-in-page', refreshState);
+    useNodeListener<'did-navigate'>(webContents, 'did-navigate', refreshState, [refreshState]);
+    useNodeListener<'did-navigate-in-page'>(webContents, 'did-navigate-in-page', refreshState, [
+        refreshState,
+    ]);
     useNodeListener<'did-change-theme-color'>(
         webContents,
         'did-change-theme-color',
@@ -84,6 +89,11 @@ export default function ColumnControls({
             setThemeColor(color);
         }
     );
+
+    useDomListener<'console-message'>(webview, 'console-message', (e: ConsoleMessageEvent) => {
+        if (!window.Logs[id]) window.Logs[id] = [];
+        window.Logs[id]!.push([e.level, e.message]);
+    });
 
     useDomListener(webview, 'new-window', (e: NewWindowEvent) => {
         if (window.API.openURL(e.url)) e.preventDefault();
@@ -99,34 +109,54 @@ export default function ColumnControls({
         setFullscreen(old => (old === id ? undefined : old));
     });
 
-    useDomListener(webview, 'page-favicon-updated', (e: FaviconChangeEvent) => {
-        const column = columns.current.find(c => c.id === id);
-        // column is expected to exist
-        column && updateFavicons(column.presetId, e.favicons);
-    });
-
-    useDomListener(webview, 'page-title-updated', (e: TitleChangeEvent) => setTitle(e.title));
-
-    const removeColumn = useCallback(() => columnDispatchers.removeColumn(id), [id]);
-
-    const loadHome = useCallback(
-        () => {
-            const column = columns.current.find(c => c.id === id);
-            // column is expected to exist
-            if (column && column.url) webContents!.loadURL(column.url);
-        },
-        [webContents, id]
+    useDomListener(
+        webview,
+        'page-favicon-updated',
+        (e: PageFaviconUpdatedEvent) =>
+            presetDispatchers.updateFavicons(column.presetId, e.favicons),
+        [column.presetId]
     );
 
+    useDomListener(webview, 'page-title-updated', (e: PageTitleUpdatedEvent) => setTitle(e.title));
+
+    const removeColumn = useCallback(() => columnDispatchers.removeColumn(id), [id]);
+    const loadHome = useCallback(() => webContents!.loadURL(column.url), [
+        webContents,
+        id,
+        column.url,
+    ]);
     const reload = useCallback(() => webContents!.reload(), [webContents]);
     const stop = useCallback(() => webContents!.stop(), [webContents]);
     const goBack = useCallback(() => webContents!.goBack(), [webContents]);
     const goForward = useCallback(() => webContents!.goForward(), [webContents]);
+    const zoomIn = useCallback(
+        () =>
+            columnDispatchers.setZoomLevel(
+                id,
+                Math.min(browser_maxZoom, zoomLevel + 1),
+                webContents!
+            ),
+        [webContents, zoomLevel]
+    );
+    const zoomOut = useCallback(
+        () =>
+            columnDispatchers.setZoomLevel(
+                id,
+                Math.max(browser_minZoom, zoomLevel - 1),
+                webContents!
+            ),
+        [webContents, zoomLevel]
+    );
+    const resetZoom = useCallback(
+        () => columnDispatchers.setZoomLevel(id, browser_zoomLevel, webContents!),
+        [webContents]
+    );
 
+    const contrastColor = useContrastColor(themeColor || '#000000');
     const themeStyle = useMemo(
         () => ({
             background: themeColor || undefined,
-            color: themeColor ? useContrastColor(themeColor) : undefined,
+            color: themeColor ? contrastColor : undefined,
         }),
         [themeColor]
     );
@@ -135,6 +165,9 @@ export default function ColumnControls({
         <div className={styles.controls} style={themeStyle}>
             <header className={styles.header}>
                 <span className={styles.title}>{title}</span>
+                <ActionIcon onClick={removeColumn} className={styles.close}>
+                    <XCircle />
+                </ActionIcon>
             </header>
             <div onClick={stopPropagation} className={styles.actionRow}>
                 <ActionIcon disabled={webContents ? !canGoBack : false} onClick={goBack}>
@@ -149,9 +182,30 @@ export default function ColumnControls({
                 <ActionIcon disabled={!webContents} onClick={loadHome}>
                     <Home />
                 </ActionIcon>
-                <ActionIcon right onClick={removeColumn}>
-                    <Trash />
+                <ActionIcon
+                    small
+                    right
+                    disabled={!webContents || zoomLevel >= browser_maxZoom}
+                    onClick={zoomIn}>
+                    <ZoomIn />
                 </ActionIcon>
+                <ActionIcon
+                    small
+                    right
+                    disabled={!webContents || zoomLevel <= browser_minZoom}
+                    onClick={zoomOut}>
+                    <ZoomOut />
+                </ActionIcon>
+                <ActionIcon
+                    small
+                    right
+                    disabled={!webContents || zoomLevel === browser_zoomLevel}
+                    onClick={resetZoom}>
+                    <X />
+                </ActionIcon>
+                {/* <ActionIcon onClick={toggleMobile}>
+                    <Monitor />
+                </ActionIcon> */}
             </div>
         </div>
     );
