@@ -17,18 +17,22 @@ const preloadWebviewPath = `file://${path.join(__dirname, 'preloadWebview.js')}`
 //     // not in prod bundle
 //     require('electron-reloader')(module, { watchRenderer: false });
 // } catch (err) {}
-// initElectronDL();
+initElectronDL();
+
+let SpaceWindows = null;
 
 ContextMenu();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let SpaceWindows = {};
 console.log(`Starting electron instance`);
 
 function onAppReady() {
-    AppMenu();
+    SpaceWindows = {};
+
     enforceMacOSAppLocation();
+
+    AppMenu();
     env.development && initDevtools();
 
     const space = storage.getSpaces()[0];
@@ -79,7 +83,7 @@ function onAppReady() {
 }
 
 app.on('ready', onAppReady);
-app.on('window-all-closed', () => is.macos && app.quit());
+app.on('window-all-closed', () => !is.macos && app.quit());
 
 // darwin only
-app.on('activate', () => Object.keys(SpaceWindows).length === 0 && onAppReady());
+app.on('activate', () => SpaceWindows && Object.keys(SpaceWindows).length === 0 && onAppReady());
