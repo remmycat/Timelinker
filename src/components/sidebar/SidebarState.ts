@@ -10,7 +10,7 @@ export enum SidebarState {
 
 type Trans = Transform<SidebarState>;
 
-const SidebarTransformers = {
+export const SidebarTransformers = {
     toggleSetup(): Trans {
         return state =>
             state === SidebarState.setupColumn ? SidebarState.none : SidebarState.setupColumn;
@@ -29,7 +29,7 @@ const SidebarTransformers = {
     },
 };
 
-export default function useSidebarState(columnsOpen: number) {
+export function useNewSidebarState(columnsOpen: number) {
     return useTransformers(
         SidebarTransformers,
         columnsOpen === 0 ? SidebarState.setupColumn : SidebarState.none

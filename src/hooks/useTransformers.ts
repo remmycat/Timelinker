@@ -17,7 +17,7 @@ export default function useTransformers<State, T extends TransformerObject<State
     transformers: T,
     initialState: State,
     persist?: (state: React.SetStateAction<State>) => any
-): [State, Dispatchers<State, T>, React.MutableRefObject<State>, boolean] {
+): [State, Dispatchers<State, T>] {
     const [state, setState] = useState<State>(initialState);
     const ref = useRef(state);
     const didChange = state === ref.current;
@@ -37,5 +37,5 @@ export default function useTransformers<State, T extends TransformerObject<State
 
     useEffect(() => persist && persist(state), [persist, state]);
 
-    return [state, boundTransformers, ref, didChange];
+    return [state, boundTransformers];
 }

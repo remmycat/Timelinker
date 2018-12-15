@@ -1,5 +1,4 @@
-import { SetStateAction } from 'react';
-import useTransformers, { Transform, Dispatchers } from '../../hooks/useTransformers';
+import useTransformers, { Transform } from '../../hooks/useTransformers';
 import useSpaceStore from '../../hooks/useSpaceStore';
 import { Preset } from '../presets/PresetState';
 import UUID from 'uuid/v4';
@@ -16,7 +15,7 @@ export type Column = {
 export type ColumnState = Column[];
 type Trans = Transform<ColumnState>;
 
-const ColumnTransformers = {
+export const ColumnTransformers = {
     addColumn(preset: Preset): Trans {
         return state => [
             ...state,
@@ -51,11 +50,9 @@ const ColumnTransformers = {
     },
 };
 
-export type ColumnDispatchers = Dispatchers<ColumnState, typeof ColumnTransformers>;
-
 const defaultState: ColumnState = [];
 
-export default function useColumnState() {
+export function useNewColumnState() {
     const [persistedState, saveState] = useSpaceStore('columns', defaultState);
     return useTransformers(ColumnTransformers, persistedState, saveState);
 }

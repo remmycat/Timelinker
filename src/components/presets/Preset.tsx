@@ -4,32 +4,32 @@ import { Preset as PresetType } from './PresetState';
 import { X } from 'react-feather';
 import clickfocus from '../../util/clickfocus';
 import { Draggable } from 'react-beautiful-dnd';
+import { useDispatchers } from '../State';
 
 type Props = {
     preset: PresetType;
-    onRemove: (id: string) => any;
-    onClick: (preset: PresetType) => any;
     index: number;
+    onPresetOpen: (preset: PresetType) => any;
 };
 
 const cropUrl = (url: string) => url.replace(/^https?:\/\//g, '');
 
-export default function Preset({ preset, onRemove, onClick, index }: Props) {
+export default function Preset({ preset, index, onPresetOpen }: Props) {
+    const { removePreset } = useDispatchers().Preset;
+
     const handleRemove = useCallback(
         (e: React.MouseEvent<any>) => {
-            if (onRemove) {
-                e.stopPropagation();
-                onRemove(preset.id);
-            }
+            e.stopPropagation();
+            removePreset(preset.id);
         },
-        [onRemove]
+        [preset.id]
     );
 
     const handleClick = useCallback(
         () => {
-            onClick(preset);
+            onPresetOpen(preset);
         },
-        [onClick]
+        [onPresetOpen]
     );
 
     const text = cropUrl(preset.url);
@@ -46,7 +46,7 @@ export default function Preset({ preset, onRemove, onClick, index }: Props) {
                             <span className={styles.icon} />
                         )}
                         <span className={styles.url}>{text}</span>
-                        {onRemove && !preset.isDefault ? (
+                        {!preset.isDefault ? (
                             <X className={styles.remove} onClick={handleRemove} />
                         ) : (
                             <div className={styles.remove} />

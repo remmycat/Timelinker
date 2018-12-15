@@ -2,13 +2,23 @@ import React, { useState, useCallback, useRef } from 'react';
 import styles from './Preset.module.scss';
 import { defaultSuggestion, Preset } from './PresetState'; // eslint-disable-line
 import { ArrowRightCircle } from 'react-feather';
+import { useDispatchers } from '../State';
 import prependHttps from '../../util/prependHttps';
 
 type Props = {
-    onAdd: (url: string) => any;
+    onPresetOpen: (preset: Preset) => any;
 };
 
-export default function PresetNew({ onAdd }: Props) {
+export default function PresetNew({ onPresetOpen }: Props) {
+    const { addUserPreset } = useDispatchers().Preset;
+
+    const addPresetAndOpen = useCallback(
+        (url: string) => {
+            addUserPreset(url, onPresetOpen);
+        },
+        [onPresetOpen]
+    );
+
     const [value, setValue] = useState('');
     const valueRef = useRef(value);
     valueRef.current = value;
@@ -20,9 +30,12 @@ export default function PresetNew({ onAdd }: Props) {
     const submit = useCallback(
         () => {
             const { current } = valueRef;
-            if (current) onAdd(prependHttps(current));
+            if (current) {
+                addPresetAndOpen(prependHttps(current));
+                setValue('');
+            }
         },
-        [onAdd]
+        [addPresetAndOpen]
     );
 
     const handleKeyPress = useCallback(

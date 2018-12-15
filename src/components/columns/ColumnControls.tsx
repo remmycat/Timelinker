@@ -1,47 +1,38 @@
-import React, { useCallback, useState, useEffect, useMemo } from 'react';
+import React, { useCallback, useState, useEffect, useMemo, memo } from 'react';
 import {
     WebContents,
     ConsoleMessageEvent,
     PageFaviconUpdatedEvent,
     NewWindowEvent,
     PageTitleUpdatedEvent,
-    webContents,
 } from 'electron';
 import useContrastColor from '../../hooks/useContrastColor';
 import { X, RefreshCw, Home, XCircle, ArrowLeft, ArrowRight, ZoomIn, ZoomOut } from 'react-feather';
 import stopPropagation from '../../util/stopPropagation';
 import ActionIcon from './ActionIcon';
-import { Column, ColumnDispatchers } from './ColumnState';
-import { PresetDispatchers } from '../presets/PresetState';
+import { Column } from './ColumnState';
 import useNodeListener from '../../hooks/useNodeListener';
 import useDomListener from '../../hooks/useDomListener';
 import styles from './Columns.module.scss';
+import { useDispatchers } from '../State';
 
 type Props = {
-    id: string;
-    webview?: HTMLWebViewElement;
-    columnDispatchers: ColumnDispatchers;
     column: Column;
+    webview: HTMLWebViewElement | undefined;
     setFullscreen: React.Dispatch<React.SetStateAction<undefined | string>>;
-    presetDispatchers: PresetDispatchers;
-    desktopUserAgent: string;
 };
 
 const browser_zoomLevel = 0;
 const browser_maxZoom = 9;
 const browser_minZoom = -8;
 
-const mobileUserAgent = `Mozilla/5.0 (Linux; Android 9; Pixel Build/PPR2.181005.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/70.0.3538.80 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/196.0.0.41.95;]`;
+export default memo(function ColumnControls({ column, webview, setFullscreen }: Props) {
+    const { id } = column;
+    const Dispatchers = useDispatchers();
 
-export default function ColumnControls({
-    id,
-    webview,
-    columnDispatchers,
-    column,
-    presetDispatchers,
-    setFullscreen,
-    desktopUserAgent,
-}: Props) {
+    const columnDispatchers = Dispatchers.Column;
+    const presetDispatchers = Dispatchers.Preset;
+
     const webContents = useMemo<WebContents | undefined>(
         () => webview && webview.getWebContents(),
         [webview]
@@ -78,16 +69,14 @@ export default function ColumnControls({
         setLoading(false);
     });
     useNodeListener<'did-navigate'>(webContents, 'did-navigate', refreshState, [refreshState]);
-    useNodeListener<'did-navigate-in-page'>(webContents, 'did-navigate-in-page', refreshState, [
-        refreshState,
-    ]);
-    useNodeListener<'did-change-theme-color'>(
-        webContents,
-        'did-change-theme-color',
-        (_: any, color: string | null) => {
-            setThemeColor(color);
-        }
-    );
+    useNodeListener<
+        'did-navigate-in-page'
+    >(webContents, 'did-navigate-in-page', refreshState, [refreshState]);
+    useNodeListener<
+        'did-change-theme-color'
+    >(webContents, 'did-change-theme-color', (_: any, color: string | null) => {
+        setThemeColor(color);
+    });
 
     useDomListener<'console-message'>(webview, 'console-message', (e: ConsoleMessageEvent) => {
         if (!window.Logs[id]) window.Logs[id] = [];
@@ -169,10 +158,10 @@ export default function ColumnControls({
                 </ActionIcon>
             </header>
             <div onClick={stopPropagation} className={styles.actionRow}>
-                <ActionIcon disabled={webContents ? !canGoBack : false} onClick={goBack}>
+                <ActionIcon disabled={webContents ? !canGoBack : true} onClick={goBack}>
                     <ArrowLeft />
                 </ActionIcon>
-                <ActionIcon disabled={webContents ? !canGoForward : false} onClick={goForward}>
+                <ActionIcon disabled={webContents ? !canGoForward : true} onClick={goForward}>
                     <ArrowRight />
                 </ActionIcon>
                 <ActionIcon disabled={!webContents} onClick={isLoading ? stop : reload}>
@@ -208,4 +197,4 @@ export default function ColumnControls({
             </div>
         </div>
     );
-}
+});

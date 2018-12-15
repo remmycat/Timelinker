@@ -1,15 +1,14 @@
-import React, { useRef, useEffect, useMemo, useState } from 'react';
+import React, { memo, useMemo, useState, Dispatch, SetStateAction, useEffect, useRef } from 'react';
 import styles from './BrowserView.module.scss';
 import { AlertTriangle } from 'react-feather';
-import useDomListener from '../hooks/useDomListener';
+import useDomListener from '../../hooks/useDomListener';
 import { DidFailLoadEvent } from 'electron';
 
 type Props = {
     url: string;
     id: string;
-    addWebview: (id: string, contents: HTMLWebViewElement) => any;
     mobile?: boolean;
-    desktopUserAgent: string;
+    setWebview: Dispatch<SetStateAction<HTMLWebViewElement | undefined>>;
 };
 
 type ErrorData = {
@@ -17,9 +16,10 @@ type ErrorData = {
     message: string;
 };
 
+const desktopUserAgent = navigator.userAgent;
 const mobileUserAgent = `Mozilla/5.0 (Linux; Android 9; Pixel Build/PPR2.181005.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/70.0.3538.80 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/196.0.0.41.95;]`;
 
-export default function BrowserView({ url, id, addWebview, mobile, desktopUserAgent }: Props) {
+export default memo(function BrowserView({ url, id, mobile, setWebview }: Props) {
     const viewRef = useRef<HTMLWebViewElement | null>(null);
     const [errorData, setErrorData] = useState<null | ErrorData>(null);
 
@@ -36,10 +36,11 @@ export default function BrowserView({ url, id, addWebview, mobile, desktopUserAg
             })
     );
 
+    useEffect(() => {
+        setWebview(viewRef.current!);
+    }, []);
+
     useDomListener<'did-start-loading'>(viewRef, 'did-start-loading', () => setErrorData(null));
-
-    useEffect(() => addWebview(id, viewRef.current!), [id]);
-
     return (
         <>
             <webview
@@ -59,4 +60,4 @@ export default function BrowserView({ url, id, addWebview, mobile, desktopUserAg
             )}
         </>
     );
-}
+});

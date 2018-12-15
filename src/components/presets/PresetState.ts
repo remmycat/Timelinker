@@ -1,5 +1,6 @@
-import useTransformers, { Transform, Dispatchers } from '../../hooks/useTransformers';
+import useTransformers, { Transform } from '../../hooks/useTransformers';
 import useAppStore from '../../hooks/useSharedStore';
+import flatArraysEqual from '../../util/flatArraysEqual';
 import UUID from 'uuid/v4';
 
 export type Preset = {
@@ -32,16 +33,20 @@ type Trans = Transform<PresetState>;
 
 const defaultState: PresetState = defaultSites.map(site => getNewPreset(site, true));
 
-const PresetTransformers = {
+export const PresetTransformers = {
     updateFavicons(presetId: string, favicons: string[]): Trans {
-        return state =>
-            state.map(preset => {
+        return state => {
+            // check if favicons actually changed, perf optimization
+            if (state.find(p => p.id === presetId && flatArraysEqual(p.favicons || [], favicons)))
+                return state;
+            return state.map(preset => {
                 if (preset.id !== presetId) return preset;
                 return {
                     ...preset,
                     favicons,
                 };
             });
+        };
     },
     addUserPreset(url: string, openColumn: (preset: Preset) => any): Trans {
         return state => {
@@ -73,9 +78,7 @@ const PresetTransformers = {
     },
 };
 
-export type PresetDispatchers = Dispatchers<PresetState, typeof PresetTransformers>;
-
-export default function usePresetState() {
+export function useNewPresetState() {
     const [initialState, saveState] = useAppStore('presets', defaultState);
     return useTransformers(PresetTransformers, initialState, saveState);
 }
