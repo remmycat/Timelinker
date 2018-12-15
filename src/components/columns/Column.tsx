@@ -26,9 +26,10 @@ export default function Column({ children, id, index, controlMode, renderControl
                     <div className={columnClasses}>
                         <div className={styles.content}>{children}</div>
                         <div
-                            onClick={clickfocus}
                             className={styles.dragCover}
                             {...dragHandleProps}
+                            // hack to not deal with merging event handlers, lol
+                            onMouseDownCapture={clickfocus}
                         />
                         <div className={styles.contentCover}>{controls}</div>
                     </div>

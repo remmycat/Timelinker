@@ -64,7 +64,6 @@ export default function ColumnControls({
                 setGoBack(webContents.canGoBack());
                 setGoForward(webContents.canGoForward());
                 setTitle(webContents.getTitle());
-                console.log('setting', zoomLevel);
                 webContents.setZoomLevel(zoomLevel);
             }
         },
