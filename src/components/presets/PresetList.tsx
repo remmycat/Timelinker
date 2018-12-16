@@ -2,7 +2,7 @@ import React from 'react';
 import PresetNew from './PresetNew';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import styles from './Preset.module.scss';
-import { useDispatchers } from '../State';
+import { useDispatchers } from '../AppState';
 import { Preset as PresetType, PresetState } from './PresetState';
 import Preset from './Preset';
 import useDragEnd from '../../hooks/useDragEnd';

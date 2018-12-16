@@ -4,7 +4,7 @@ import { Droppable, DragDropContext } from 'react-beautiful-dnd'; // eslint-disa
 import Column from './Column';
 import { Column as ColumnType, ColumnState } from './ColumnState';
 import useDragEnd from '../../hooks/useDragEnd';
-import { useDispatchers } from '../State';
+import { useDispatchers } from '../AppState';
 
 type Props = {
     id: string;

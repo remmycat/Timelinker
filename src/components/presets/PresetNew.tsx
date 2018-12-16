@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import styles from './Preset.module.scss';
 import { defaultSuggestion, Preset } from './PresetState'; // eslint-disable-line
 import { ArrowRightCircle } from 'react-feather';
-import { useDispatchers } from '../State';
+import { useDispatchers } from '../AppState';
 import prependHttps from '../../util/prependHttps';
 
 type Props = {

@@ -4,7 +4,7 @@ import { Preset as PresetType } from './PresetState';
 import { X } from 'react-feather';
 import clickfocus from '../../util/clickfocus';
 import { Draggable } from 'react-beautiful-dnd';
-import { useDispatchers } from '../State';
+import { useDispatchers } from '../AppState';
 
 type Props = {
     preset: PresetType;

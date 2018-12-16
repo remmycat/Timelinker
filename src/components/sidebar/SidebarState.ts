@@ -1,12 +1,10 @@
 import useTransformers, { Transform } from '../../hooks/useTransformers';
 
-/* eslint-disable no-unused-vars */
 export enum SidebarState {
     setupColumn,
     control,
     none,
 }
-/* eslint-enable no-unused-vars */
 
 type Trans = Transform<SidebarState>;
 

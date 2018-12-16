@@ -4,7 +4,7 @@ import { useNewColumnState, ColumnState, ColumnTransformers } from './columns/Co
 import { useNewPresetState, PresetTransformers, PresetState } from './presets/PresetState';
 import { useNewSidebarState, SidebarTransformers, SidebarState } from './sidebar/SidebarState';
 
-export type StateObject = {
+export type AppState = {
     columns: ColumnState;
     presets: PresetState;
     sidebar: SidebarState;
@@ -23,7 +23,7 @@ export function useDispatchers() {
 }
 
 type Props = {
-    children: (state: StateObject) => React.ReactNode;
+    children: (state: AppState) => React.ReactNode;
 };
 
 export default function State({ children }: Props) {

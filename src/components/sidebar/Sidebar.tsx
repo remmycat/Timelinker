@@ -8,7 +8,7 @@ import PresetList from '../presets/PresetList';
 import SidebarIcon from './SidebarIcon';
 import { PlusCircle, Grid } from 'react-feather';
 import useDomListener from '../../hooks/useDomListener';
-import { useDispatchers } from '../State';
+import { useDispatchers } from '../AppState';
 
 type Props = {
     state: SidebarState;

@@ -1,15 +1,14 @@
 import React from 'react';
 import styles from './App.module.scss';
 import ColumnLayout from './columns/ColumnLayout';
-import BrowserView from './columns/BrowserView';
 import Sidebar from './sidebar/Sidebar';
 import { SidebarState } from './sidebar/SidebarState';
-import State from './State';
+import AppState from './AppState';
 
 export default function App() {
     return (
         <div className={styles.layout}>
-            <State>
+            <AppState>
                 {({ presets, sidebar, columns }) => (
                     <>
                         <Sidebar
@@ -24,7 +23,7 @@ export default function App() {
                         />
                     </>
                 )}
-            </State>
+            </AppState>
         </div>
     );
 }

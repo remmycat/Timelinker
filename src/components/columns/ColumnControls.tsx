@@ -14,7 +14,7 @@ import { Column } from './ColumnState';
 import useNodeListener from '../../hooks/useNodeListener';
 import useDomListener from '../../hooks/useDomListener';
 import styles from './Columns.module.scss';
-import { useDispatchers } from '../State';
+import { useDispatchers } from '../AppState';
 
 type Props = {
     column: Column;
@@ -158,10 +158,10 @@ export default memo(function ColumnControls({ column, webview, setFullscreen }: 
                 </ActionIcon>
             </header>
             <div onClick={stopPropagation} className={styles.actionRow}>
-                <ActionIcon disabled={webContents ? !canGoBack : true} onClick={goBack}>
+                <ActionIcon disabled={!webContents || !canGoBack} onClick={goBack}>
                     <ArrowLeft />
                 </ActionIcon>
-                <ActionIcon disabled={webContents ? !canGoForward : true} onClick={goForward}>
+                <ActionIcon disabled={!webContents || !canGoForward} onClick={goForward}>
                     <ArrowRight />
                 </ActionIcon>
                 <ActionIcon disabled={!webContents} onClick={isLoading ? stop : reload}>

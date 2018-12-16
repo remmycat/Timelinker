@@ -33,24 +33,4 @@ declare global {
         send: (channel: string, ...args: any[]) => undefined;
         getWebContents: () => WebContents;
     }
-
-    // interface NewWindowEvent extends UIEvent {
-    //     readonly url: string;
-    // }
-
-    // interface FaviconChangeEvent extends UIEvent {
-    //     readonly favicons: string[];
-    // }
-
-    // interface TitleChangeEvent extends UIEvent {
-    //     readonly title: string;
-    //     readonly explicitSet: boolean;
-    // }
-
-    // interface ConsoleEvent extends UIEvent {
-    //     readonly level: number;
-    //     readonly message: string;
-    //     readonly line: number;
-    //     readonly sourceId: string;
-    // }
 }
