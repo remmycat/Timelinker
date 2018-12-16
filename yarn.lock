@@ -3595,10 +3595,10 @@ electron-util@^0.10.2:
     electron-is-dev "^1.0.0"
     new-github-issue-url "^0.1.2"
 
-electron@^4.0.0-beta.9:
-  version "4.0.0-beta.9"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-4.0.0-beta.9.tgz#18034e48e4e30fb49920974416edd77f6ba6a558"
-  integrity sha512-BPFkN4BFQy88x2ZHVmzI03i1mUgaQF/uROPb/TlGB/WNAD3v2OvA9Ak9yZ5ADNnwhlR28DtUGs/MuZfDZHZBoQ==
+electron@^3.0.12:
+  version "3.0.12"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-3.0.12.tgz#7486ff1c60e9c22d8aadaee620695c42c9ddb2ac"
+  integrity sha512-stvGbqYzWv5qHHtjZZgA7gET3NPGLuxs68IHTrJqsqujQfXGkhMOh8tstpXl86kBdRpzZn7GaDlTWcgeFSmsPw==
   dependencies:
     "@types/node" "^8.0.24"
     electron-download "^4.1.0"
