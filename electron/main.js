@@ -1,7 +1,6 @@
 const { app } = require('electron');
 const createWindow = require('./createWindow');
 const initDevtools = require('./initDevtools');
-const env = require('./env');
 const storage = require('./storage');
 const path = require('path');
 const injectedAPI = require('./injectedAPI');
@@ -33,7 +32,7 @@ function onAppReady() {
     enforceMacOSAppLocation();
 
     AppMenu();
-    env.development && initDevtools();
+    is.development && initDevtools();
 
     const space = storage.getSpaces()[0];
     const win = (SpaceWindows[space.id] = createWindow(() => {
@@ -57,12 +56,7 @@ function onAppReady() {
             SpaceId: space.id,
         },
     };
-    (env.production ? ReactApp.prod : ReactApp.dev)(win);
-    env.debug &&
-        win.webContents.on('did-fail-load', e => {
-            console.log('window failed to load!');
-            console.error(e);
-        });
+    (is.development ? ReactApp.dev : ReactApp.prod)(win);
 
     win.webContents.on('will-attach-webview', (e, preferences, params) => {
         Object.assign(preferences, {

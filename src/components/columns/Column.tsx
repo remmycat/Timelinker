@@ -19,7 +19,7 @@ export default memo(function Column({ column, index, controlMode, setFullscreen 
         [styles.column__controlMode]: controlMode,
     });
 
-    const [webview, setWebview] = useState<HTMLWebViewElement | undefined>(undefined);
+    const [webview, setWebview] = useState<HTMLWebviewElement | undefined>(undefined);
 
     return (
         <Draggable draggableId={column.id} index={index}>

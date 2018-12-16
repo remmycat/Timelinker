@@ -18,7 +18,7 @@ import { useDispatchers } from '../AppState';
 
 type Props = {
     column: Column;
-    webview: HTMLWebViewElement | undefined;
+    webview: HTMLWebviewElement | undefined;
     setFullscreen: React.Dispatch<React.SetStateAction<undefined | string>>;
 };
 

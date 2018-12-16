@@ -1,9 +1,11 @@
 const { remote, webFrame } = require('electron');
-const ElectronStore = remote.require('electron-store');
-const { API, SpaceStore, SharedStore, SpaceId } = remote.getCurrentWindow().injected;
+const ElectronStore = require('electron-store');
+const { is } = require('electron-util');
+const { API, SpaceStore, SharedStore, Metadata } = remote.getCurrentWindow().injected;
 
 window.API = API;
-window.SpaceId = SpaceId;
+window.Metadata = { ...Metadata };
+window.env = { ...is };
 window.SpaceStore = new ElectronStore(SpaceStore);
 window.SharedStore = new ElectronStore(SharedStore);
 

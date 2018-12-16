@@ -8,7 +8,7 @@ type Props = {
     url: string;
     id: string;
     mobile?: boolean;
-    setWebview: Dispatch<SetStateAction<HTMLWebViewElement | undefined>>;
+    setWebview: Dispatch<SetStateAction<HTMLWebviewElement | undefined>>;
 };
 
 type ErrorData = {
@@ -16,11 +16,17 @@ type ErrorData = {
     message: string;
 };
 
+const hideScrollbarCss = `
+body::-webkit-scrollbar { 
+    display: none!important; 
+}
+`;
+
 const desktopUserAgent = navigator.userAgent;
 const mobileUserAgent = `Mozilla/5.0 (Linux; Android 9; Pixel Build/PPR2.181005.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/70.0.3538.80 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/196.0.0.41.95;]`;
 
 export default memo(function BrowserView({ url, id, mobile, setWebview }: Props) {
-    const viewRef = useRef<HTMLWebViewElement | null>(null);
+    const viewRef = useRef<HTMLWebviewElement | null>(null);
     const [errorData, setErrorData] = useState<null | ErrorData>(null);
 
     const initialUseragent = useMemo(() => (mobile ? mobileUserAgent : desktopUserAgent), []);
@@ -36,9 +42,11 @@ export default memo(function BrowserView({ url, id, mobile, setWebview }: Props)
             })
     );
 
-    useEffect(() => {
-        setWebview(viewRef.current!);
-    }, []);
+    useDomListener<'did-finish-load'>(viewRef, 'did-finish-load', () => {
+        if (!window.env.macos) viewRef.current!.insertCSS(hideScrollbarCss);
+    });
+
+    useEffect(() => setWebview(viewRef.current!), []);
 
     useDomListener<'did-start-loading'>(viewRef, 'did-start-loading', () => setErrorData(null));
     return (

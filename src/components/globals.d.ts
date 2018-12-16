@@ -1,5 +1,5 @@
 import Store from 'electron-store';
-import { WebContents } from 'electron';
+import { WebContents, WebviewTag } from 'electron';
 import { PresetState } from './presets/PresetState';
 import { ColumnState } from './columns/ColumnState';
 
@@ -24,13 +24,21 @@ declare global {
         Metadata: {
             SpaceId: string;
         };
+        env: {
+            macos: boolean;
+            linux: boolean;
+            windows: boolean;
+            main: boolean;
+            renderer: boolean;
+            development: boolean;
+            usingAsar: boolean;
+            macAppStore: boolean;
+            windowsStore: boolean;
+        };
         Logs: {
             [key: string]: undefined | Array<[number, string]>;
         };
     }
 
-    interface HTMLWebViewElement {
-        send: (channel: string, ...args: any[]) => undefined;
-        getWebContents: () => WebContents;
-    }
+    interface HTMLWebviewElement extends WebviewTag {}
 }

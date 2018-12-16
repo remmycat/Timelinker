@@ -1,6 +1,8 @@
 {
     "eslint.validate": ["typescript", "typescriptreact"],
-    "javascript.validate.enable": false,
     "scss.lint.validProperties": ["composes"],
-    "scss.lint.emptyRules": "ignore"
+    "scss.lint.emptyRules": "ignore",
+    "files.exclude": {
+        "node_modules": true
+    }
 }
