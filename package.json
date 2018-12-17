@@ -35,6 +35,7 @@
         "electron-devtools-installer": "^2.2.4",
         "electron-reloader": "^0.2.0",
         "eslint-plugin-prettier": "^3.0.0",
+        "eslint-plugin-react-hooks": "^0.0.0",
         "eslint-plugin-typescript": "^0.14.0",
         "node-sass": "^4.10.0",
         "prepend-http": "^2.0.0",
@@ -70,6 +71,37 @@
         "not ie <= 11",
         "not op_mini all"
     ],
+    "eslintConfig": {
+        "extends": [
+            "react-app"
+        ],
+        "parser": "typescript-eslint-parser",
+        "plugins": [
+            "prettier",
+            "typescript",
+            "react-hooks"
+        ],
+        "rules": {
+            "prettier/prettier": [
+                "error",
+                {
+                    "parser": "typescript"
+                }
+            ],
+            "no-unused-vars": 0
+        }
+    },
+    "prettier": {
+        "printWidth": 100,
+        "tabWidth": 4,
+        "useTabs": false,
+        "semi": true,
+        "singleQuote": true,
+        "trailingComma": "es5",
+        "bracketSpacing": true,
+        "jsxBracketSameLine": true,
+        "fluid": false
+    },
     "build": {
         "appId": "com.electron.timelinker",
         "files": [
