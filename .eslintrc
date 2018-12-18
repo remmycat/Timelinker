@@ -1,0 +1,16 @@
+{
+    "extends": ["react-app"],
+    "parser": "typescript-eslint-parser",
+    "plugins": ["prettier", "typescript", "react-hooks"],
+    "rules": {
+        "prettier/prettier": [
+            "error",
+            {
+                "parser": "typescript"
+            }
+        ],
+        "no-unused-vars": 0,
+        "typescript/no-unused-vars": 2,
+        "react-hooks/rules-of-hooks": 2
+    }
+}
