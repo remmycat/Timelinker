@@ -3,6 +3,7 @@ const ElectronStore = require('./Store');
 const path = require('path');
 const uuid = require('uuid/v4');
 const fs = require('fs');
+const migrateStores = require('./migrateStores');
 
 const userData = electron.app.getPath('userData');
 if (!fs.existsSync(userData)) fs.mkdirSync(userData);
@@ -10,6 +11,12 @@ const storagePath = path.join(userData, 'Store');
 if (!fs.existsSync(storagePath)) fs.mkdirSync(storagePath);
 const spacePath = path.join(storagePath, 'spaces');
 if (!fs.existsSync(spacePath)) fs.mkdirSync(spacePath);
+
+migrateStores(storagePath, {
+    application: 'application-state.json',
+    shared: 'shared.json',
+    spaces: 'spaces/*.json',
+});
 
 const AppStore = new ElectronStore({
     cwd: storagePath,

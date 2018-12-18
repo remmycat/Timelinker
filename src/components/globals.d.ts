@@ -1,10 +1,13 @@
 import Store from 'electron-store';
+import { SetStateAction } from 'react';
 import { WebContents, WebviewTag } from 'electron';
 import { PresetState } from './presets/PresetState';
 import { ColumnState } from './columns/ColumnState';
 
 declare global {
-    interface ElectronStore<T> extends Store<T> {}
+    interface ElectronStore<T> extends Store<T> {
+        update(key: keyof T, updater: SetStateAction<T>): void;
+    }
     type SharedState = {
         presets: PresetState;
     };

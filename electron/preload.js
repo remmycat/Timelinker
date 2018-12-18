@@ -1,5 +1,5 @@
 const { remote, webFrame } = require('electron');
-const ElectronStore = require('electron-store');
+const ElectronStore = require('./Store');
 const { is } = require('electron-util');
 const { API, SpaceStore, SharedStore, Metadata } = remote.getCurrentWindow().injected;
 

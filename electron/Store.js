@@ -5,8 +5,8 @@ module.exports = class Store extends ElectronStore {
         super(...args);
     }
 
-    update(key, updater, defaultValue) {
-        const newValue = updater(this.get(key, defaultValue));
+    update(key, update) {
+        const newValue = typeof update === 'function' ? update(this.get(key)) : update;
         this.set(key, newValue);
         return newValue;
     }
