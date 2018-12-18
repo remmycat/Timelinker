@@ -9,7 +9,17 @@
     "description": "A Social Timeline Column-Browser",
     "keywords": [],
     "main": "electron/main.js",
-    "homepage": "./",
+    "scripts": {
+        "start": "cross-env BROWSER=none react-scripts start",
+        "build": "cross-env PUBLIC_URL=. react-scripts build",
+        "test": "react-scripts test --env=jsdom",
+        "electron:main": "wait-port 3000 && electron .",
+        "electron:cra": "npm run start",
+        "dev": "run-p -r electron:*",
+        "dist": "npm run build && electron-builder",
+        "dist:all": "npm run build && electron-builder -mwl",
+        "dist:pack": "npm run build && electron-builder --dir"
+    },
     "dependencies": {
         "cross-env": "^5.2.0",
         "electron-context-menu": "^0.10.1",
@@ -31,7 +41,7 @@
         "@types/uuid": "^3.4.4",
         "@types/wcag-contrast": "^2.1.0",
         "classnames": "^2.2.6",
-        "electron": "^3.0.12",
+        "electron": "^3.0.13",
         "electron-builder": "^20.38.3",
         "electron-devtools-installer": "^2.2.4",
         "electron-reloader": "^0.2.0",
@@ -53,18 +63,6 @@
         "typescript-eslint-parser": "^21.0.1",
         "wait-port": "^0.2.2",
         "wcag-contrast": "^2.1.1"
-    },
-    "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test --env=jsdom",
-        "electron:main": "wait-port 3000 && electron .",
-        "electron:cra": "cross-env BROWSER=none npm run start",
-        "dev": "run-p -r electron:*",
-        "prod": "cross-env TIMELINKER_PROD_TEST=true electron .",
-        "dist": "cross-env GENERATE_SOURCEMAP=false npm run build && electron-builder",
-        "dist:all": "cross-env GENERATE_SOURCEMAP=false npm run build && electron-builder -mwl",
-        "dist:pack": "cross-env GENERATE_SOURCEMAP=false npm run build && electron-builder --dir"
     },
     "browserslist": [
         ">0.2%",
