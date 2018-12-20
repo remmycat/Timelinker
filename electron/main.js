@@ -1,4 +1,4 @@
-const { app } = require('electron');
+const { app, ipcMain } = require('electron');
 const createWindow = require('./createWindow');
 const initDevtools = require('./initDevtools');
 const storage = require('./storage');
@@ -26,18 +26,11 @@ ContextMenu();
 // be closed automatically when the JavaScript object is garbage collected.
 console.log(`Starting electron instance`);
 
-function onAppReady() {
-    SpaceWindows = {};
-
-    enforceMacOSAppLocation();
-
-    AppMenu();
-    is.development && initDevtools();
-
-    const space = storage.getSpaces()[0];
+function addWindow(space) {
     const win = (SpaceWindows[space.id] = createWindow(() => {
         delete SpaceWindows[space.id];
     }, space.bounds));
+    storage.setSpaceOpen(space.id, true);
 
     if (space.isFullscreen) {
         win.setFullScreen(true);
@@ -50,10 +43,11 @@ function onAppReady() {
     });
 
     win.injected = {
-        ...storage.remoteAPI(space.id),
+        StoreConfigs: storage.getStoreConfigs(space.id),
         API: injectedAPI,
         Metadata: {
             SpaceId: space.id,
+            addNewWindow,
         },
     };
     (is.development ? ReactApp.dev : ReactApp.prod)(win);
@@ -75,6 +69,34 @@ function onAppReady() {
         });
     });
 }
+
+function addNewWindow() {
+    const space = storage.addSpace();
+    addWindow(space);
+}
+
+function onAppReady() {
+    SpaceWindows = {};
+
+    enforceMacOSAppLocation();
+
+    AppMenu();
+    is.development && initDevtools();
+
+    const space = storage.getSpaces()[0];
+
+    addWindow(space);
+}
+
+ipcMain.on('my-shared-store-updated', event => {
+    if (SpaceWindows) {
+        Object.values(SpaceWindows)
+            .filter(w => w.webContents !== event.sender)
+            .forEach(w => {
+                w.webContents.send('your-shared-store-updated');
+            });
+    }
+});
 
 app.on('ready', onAppReady);
 app.on('window-all-closed', () => !is.macos && app.quit());

@@ -1,4 +1,4 @@
-const Store = require('./Store');
+const Store = require('electron-store');
 const glob = require('glob');
 const path = require('path');
 

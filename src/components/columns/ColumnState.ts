@@ -1,8 +1,8 @@
 import useTransformers, { Transform } from '../../hooks/useTransformers';
-import useSpaceStore from '../../hooks/useSpaceStore';
 import { Preset } from '../presets/PresetState';
 import UUID from 'uuid/v4';
 import { WebContents } from 'electron';
+import useSpaceState from '../../hooks/useSpaceState';
 
 export type Column = {
     id: string;
@@ -53,6 +53,8 @@ export const ColumnTransformers = {
 const defaultState: ColumnState = [];
 
 export function useNewColumnState() {
-    const [persistedState, saveState] = useSpaceStore('columns', defaultState);
-    return useTransformers(ColumnTransformers, persistedState, saveState);
+    const [state, setState] = useSpaceState('columns', defaultState);
+    const tranformers = useTransformers(setState, ColumnTransformers);
+
+    return [state, tranformers] as [typeof state, typeof tranformers];
 }

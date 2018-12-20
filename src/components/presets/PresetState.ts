@@ -1,5 +1,5 @@
 import useTransformers, { Transform } from '../../hooks/useTransformers';
-import useAppStore from '../../hooks/useSharedStore';
+import useSharedState from '../../hooks/useSharedState';
 import flatArraysEqual from '../../util/flatArraysEqual';
 import UUID from 'uuid/v4';
 
@@ -79,6 +79,8 @@ export const PresetTransformers = {
 };
 
 export function useNewPresetState() {
-    const [initialState, saveState] = useAppStore('presets', defaultState);
-    return useTransformers(PresetTransformers, initialState, saveState);
+    const [state, setState] = useSharedState('presets', defaultState);
+    const tranformers = useTransformers(setState, PresetTransformers);
+
+    return [state, tranformers] as [typeof state, typeof tranformers];
 }

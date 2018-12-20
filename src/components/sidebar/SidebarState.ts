@@ -1,4 +1,5 @@
 import useTransformers, { Transform } from '../../hooks/useTransformers';
+import { useState } from 'react';
 
 export enum SidebarState {
     setupColumn,
@@ -28,8 +29,8 @@ export const SidebarTransformers = {
 };
 
 export function useNewSidebarState(columnsOpen: number) {
-    return useTransformers(
-        SidebarTransformers,
-        columnsOpen === 0 ? SidebarState.setupColumn : SidebarState.none
-    );
+    const defaultState = columnsOpen === 0 ? SidebarState.setupColumn : SidebarState.none;
+    const [state, setState] = useState(defaultState);
+    const transformers = useTransformers(setState, SidebarTransformers);
+    return [state, transformers] as [typeof state, typeof transformers];
 }

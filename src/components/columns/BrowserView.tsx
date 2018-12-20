@@ -3,12 +3,14 @@ import styles from './BrowserView.module.scss';
 import { AlertTriangle } from 'react-feather';
 import useDomListener from '../../hooks/useDomListener';
 import { DidFailLoadEvent } from 'electron';
+import { WebviewTag } from 'electron';
+import { env } from '../../Injected';
 
 type Props = {
     url: string;
     id: string;
     mobile?: boolean;
-    setWebview: Dispatch<SetStateAction<HTMLWebviewElement | undefined>>;
+    setWebview: Dispatch<SetStateAction<WebviewTag | undefined>>;
 };
 
 type ErrorData = {
@@ -26,7 +28,7 @@ const desktopUserAgent = navigator.userAgent;
 const mobileUserAgent = `Mozilla/5.0 (Linux; Android 9; Pixel Build/PPR2.181005.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/70.0.3538.80 Mobile Safari/537.36 [FB_IAB/FB4A;FBAV/196.0.0.41.95;]`;
 
 export default memo(function BrowserView({ url, id, mobile, setWebview }: Props) {
-    const viewRef = useRef<HTMLWebviewElement | null>(null);
+    const viewRef = useRef<WebviewTag | null>(null);
     const [errorData, setErrorData] = useState<null | ErrorData>(null);
 
     const initialUseragent = useMemo(() => (mobile ? mobileUserAgent : desktopUserAgent), []);
@@ -43,7 +45,7 @@ export default memo(function BrowserView({ url, id, mobile, setWebview }: Props)
     );
 
     useDomListener<'did-finish-load'>(viewRef, 'did-finish-load', () => {
-        if (!window.env.macos) viewRef.current!.insertCSS(hideScrollbarCss);
+        if (!env.macos) viewRef.current!.insertCSS(hideScrollbarCss);
     });
 
     useEffect(() => setWebview(viewRef.current!), []);

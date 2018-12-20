@@ -1,5 +1,5 @@
 const electron = require('electron');
-const ElectronStore = require('./Store');
+const ElectronStore = require('electron-store');
 const path = require('path');
 const uuid = require('uuid/v4');
 const fs = require('fs');
@@ -30,12 +30,27 @@ function newSpace() {
         isMaximized: false,
         isMinimized: false,
         isFullScreen: false,
+        isOpen: false,
     };
 }
 
+function setSpaceOpen(id, isOpen) {
+    return AppStore.set(
+        'last-opened',
+        AppStore.get('last-opened', []).map(space => {
+            if (space.id !== id) return space;
+            return {
+                ...space,
+                isOpen,
+            };
+        })
+    );
+}
+
 function saveWindowState(win, id) {
-    return AppStore.update('last-opened', (old = []) =>
-        old.map(space => {
+    return AppStore.set(
+        'last-opened',
+        AppStore.get('last-opened', []).map(space => {
             if (space.id !== id) return space;
             const isMax = win.isMaximized();
             const isFull = win.isFullScreen();
@@ -52,14 +67,17 @@ function saveWindowState(win, id) {
 }
 
 function addSpace() {
-    return AppStore.update('last-opened', (old = []) => [...old, newSpace()]);
+    const space = newSpace();
+    AppStore.set('last-opened', [...AppStore.get('last-opened', []), newSpace()]);
+    return space;
 }
 
 function getSpaces() {
-    return (AppStore.get('last-opened') || addSpace()).reverse();
+    const lastOpened = AppStore.get('last-opened', []).reverse();
+    return lastOpened.length ? lastOpened : [addSpace()];
 }
 
-function remoteAPI(id) {
+function getStoreConfigs(id) {
     return {
         SharedStore: {
             cwd: storagePath,
@@ -73,7 +91,9 @@ function remoteAPI(id) {
 }
 
 module.exports = {
-    remoteAPI,
+    getStoreConfigs,
     getSpaces,
+    addSpace,
+    setSpaceOpen,
     saveWindowState,
 };

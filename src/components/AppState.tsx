@@ -4,11 +4,19 @@ import { useNewColumnState, ColumnState, ColumnTransformers } from './columns/Co
 import { useNewPresetState, PresetTransformers, PresetState } from './presets/PresetState';
 import { useNewSidebarState, SidebarTransformers, SidebarState } from './sidebar/SidebarState';
 
-export type AppState = {
-    columns: ColumnState;
-    presets: PresetState;
-    sidebar: SidebarState;
+export type States = {
+    Shared: {
+        presets: PresetState;
+    };
+    Space: {
+        columns: ColumnState;
+    };
+    Local: {
+        sidebar: SidebarState;
+    };
 };
+
+export type AppState = States['Shared'] & States['Space'] & States['Local'];
 
 type Dispatchs = {
     Column: Dispatchers<ColumnState, typeof ColumnTransformers>;

@@ -6,6 +6,7 @@ import ColumnControls from './ColumnControls';
 import BrowserView from './BrowserView';
 import { Draggable } from 'react-beautiful-dnd';
 import { Column as ColumnType } from './ColumnState';
+import { WebviewTag } from 'electron';
 
 type Props = {
     controlMode: boolean;
@@ -19,7 +20,7 @@ export default memo(function Column({ column, index, controlMode, setFullscreen 
         [styles.column__controlMode]: controlMode,
     });
 
-    const [webview, setWebview] = useState<HTMLWebviewElement | undefined>(undefined);
+    const [webview, setWebview] = useState<WebviewTag | undefined>(undefined);
 
     return (
         <Draggable draggableId={column.id} index={index}>

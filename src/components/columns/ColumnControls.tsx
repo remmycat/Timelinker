@@ -15,10 +15,12 @@ import useNodeListener from '../../hooks/useNodeListener';
 import useDomListener from '../../hooks/useDomListener';
 import styles from './Columns.module.scss';
 import { useDispatchers } from '../AppState';
+import { WebviewTag } from 'electron';
+import { Logs, API } from '../../Injected';
 
 type Props = {
     column: Column;
-    webview: HTMLWebviewElement | undefined;
+    webview: WebviewTag | undefined;
     setFullscreen: React.Dispatch<React.SetStateAction<undefined | string>>;
 };
 
@@ -79,12 +81,12 @@ export default memo(function ColumnControls({ column, webview, setFullscreen }: 
     });
 
     useDomListener<'console-message'>(webview, 'console-message', (e: ConsoleMessageEvent) => {
-        if (!window.Logs[id]) window.Logs[id] = [];
-        window.Logs[id]!.push([e.level, e.message]);
+        if (!Logs[id]) Logs[id] = [];
+        Logs[id]!.push([e.level, e.message]);
     });
 
     useDomListener(webview, 'new-window', (e: NewWindowEvent) => {
-        if (window.API.openURL(e.url)) e.preventDefault();
+        if (API.openURL(e.url)) e.preventDefault();
     });
 
     useDomListener(webview, 'enter-html-full-screen', (e: Event) => {

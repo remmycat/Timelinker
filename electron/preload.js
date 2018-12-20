@@ -1,15 +1,39 @@
-const { remote, webFrame } = require('electron');
-const ElectronStore = require('./Store');
+const { remote, webFrame, ipcRenderer: ipc } = require('electron');
+const ElectronStore = require('electron-store');
 const { is } = require('electron-util');
-const { API, SpaceStore, SharedStore, Metadata } = remote.getCurrentWindow().injected;
+const { EventEmitter } = require('events');
+const { API, StoreConfigs, Metadata } = remote.getCurrentWindow().injected;
 
-window.API = API;
-window.Metadata = { ...Metadata };
-window.env = { ...is };
-window.SpaceStore = new ElectronStore(SpaceStore);
-window.SharedStore = new ElectronStore(SharedStore);
+class SharedElectronStore extends ElectronStore {
+    get store() {
+        return super.store;
+    }
 
-window.Logs = {};
+    set store(store) {
+        super.store = store;
+        ipc.send('my-shared-store-updated');
+    }
+}
+
+const SpaceEvents = new EventEmitter();
+
+function forwardIpc(ipcEvent, spaceEvent) {
+    ipc.on(ipcEvent, (...args) => {
+        SpaceEvents.emit(spaceEvent || ipcEvent, ...args);
+    });
+}
+
+forwardIpc('your-shared-store-updated', 'shared-store-updated');
+
+window.Injected = {
+    API,
+    Metadata: { ...Metadata },
+    env: { ...is },
+    SpaceStore: new ElectronStore(StoreConfigs.SpaceStore),
+    SharedStore: new SharedElectronStore(StoreConfigs.SharedStore),
+    SpaceEvents,
+    Logs: {},
+};
 
 const ResizeObserver = window.ResizeObserver;
 window.ResizeObserver = class MonkeyPatchedResizeObserver extends ResizeObserver {
