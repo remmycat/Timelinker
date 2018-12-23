@@ -4,6 +4,7 @@ import ColumnLayout from './columns/ColumnLayout';
 import Sidebar from './sidebar/Sidebar';
 import { SidebarState } from './sidebar/SidebarState';
 import AppState from './AppState';
+import Commands from './Commands';
 
 export default function App() {
     return (
@@ -11,6 +12,7 @@ export default function App() {
             <AppState>
                 {({ presets, sidebar, columns }) => (
                     <>
+                        <Commands />
                         <Sidebar
                             presets={presets}
                             state={sidebar}

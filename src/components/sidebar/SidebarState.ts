@@ -17,14 +17,20 @@ export const SidebarTransformers = {
     closeSetup(): Trans {
         return state => (state === SidebarState.setupColumn ? SidebarState.none : state);
     },
+    openSetup(): Trans {
+        return SidebarState.setupColumn;
+    },
     toggleArrangement(): Trans {
         return state => (state === SidebarState.control ? SidebarState.none : SidebarState.control);
     },
     closeArrangement(): Trans {
         return state => (state === SidebarState.control ? SidebarState.none : state);
     },
+    openArrangement(): Trans {
+        return SidebarState.control;
+    },
     resetSidebarState(): Trans {
-        return state => SidebarState.none;
+        return SidebarState.none;
     },
 };
 

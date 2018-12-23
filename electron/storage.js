@@ -13,7 +13,7 @@ const spacePath = path.join(storagePath, 'spaces');
 if (!fs.existsSync(spacePath)) fs.mkdirSync(spacePath);
 
 migrateStores(storagePath, {
-    application: 'application-state.json',
+    main: 'application-state.json',
     shared: 'shared.json',
     spaces: 'spaces/*.json',
 });
@@ -29,21 +29,18 @@ function newSpace() {
         bounds: { width: 800, height: 600 },
         isMaximized: false,
         isMinimized: false,
-        isFullScreen: false,
+        isFullscreen: false,
         isOpen: false,
     };
 }
 
-function setSpaceOpen(id, isOpen) {
+function setSpacesOpen(ids) {
     return AppStore.set(
         'last-opened',
-        AppStore.get('last-opened', []).map(space => {
-            if (space.id !== id) return space;
-            return {
-                ...space,
-                isOpen,
-            };
-        })
+        AppStore.get('last-opened', []).map(space => ({
+            ...space,
+            isOpen: ids.includes(space.id),
+        }))
     );
 }
 
@@ -68,12 +65,14 @@ function saveWindowState(win, id) {
 
 function addSpace() {
     const space = newSpace();
-    AppStore.set('last-opened', [...AppStore.get('last-opened', []), newSpace()]);
+    AppStore.set('last-opened', [...AppStore.get('last-opened', []), space]);
     return space;
 }
 
 function getSpaces() {
-    const lastOpened = AppStore.get('last-opened', []).reverse();
+    const lastOpened = AppStore.get('last-opened', [])
+        .filter(space => space.isOpen)
+        .reverse();
     return lastOpened.length ? lastOpened : [addSpace()];
 }
 
@@ -94,6 +93,6 @@ module.exports = {
     getStoreConfigs,
     getSpaces,
     addSpace,
-    setSpaceOpen,
+    setSpacesOpen,
     saveWindowState,
 };

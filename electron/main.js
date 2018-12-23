@@ -1,4 +1,4 @@
-const { app, ipcMain } = require('electron');
+const { app, ipcMain, BrowserWindow } = require('electron');
 const createWindow = require('./createWindow');
 const initDevtools = require('./initDevtools');
 const storage = require('./storage');
@@ -19,6 +19,7 @@ const preloadWebviewPath = `file://${path.join(__dirname, 'preloadWebview.js')}`
 initElectronDL();
 
 let SpaceWindows = null;
+let quitting = false;
 
 ContextMenu();
 
@@ -29,8 +30,14 @@ console.log(`Starting electron instance`);
 function addWindow(space) {
     const win = (SpaceWindows[space.id] = createWindow(() => {
         delete SpaceWindows[space.id];
+        if (!quitting) {
+            // only execute if not force closed.
+            // case where user closes all windows is handled via window-all-closed event.
+            storage.setSpacesOpen(Object.keys(SpaceWindows || {}));
+        }
     }, space.bounds));
-    storage.setSpaceOpen(space.id, true);
+
+    storage.setSpacesOpen(Object.keys(SpaceWindows || {}));
 
     if (space.isFullscreen) {
         win.setFullScreen(true);
@@ -44,10 +51,9 @@ function addWindow(space) {
 
     win.injected = {
         StoreConfigs: storage.getStoreConfigs(space.id),
-        API: injectedAPI,
+        API: injectedAPI(win),
         Metadata: {
             SpaceId: space.id,
-            addNewWindow,
         },
     };
     (is.development ? ReactApp.dev : ReactApp.prod)(win);
@@ -80,12 +86,10 @@ function onAppReady() {
 
     enforceMacOSAppLocation();
 
-    AppMenu();
+    AppMenu({ addNewWindow });
     is.development && initDevtools();
 
-    const space = storage.getSpaces()[0];
-
-    addWindow(space);
+    storage.getSpaces().map(s => addWindow(s));
 }
 
 ipcMain.on('my-shared-store-updated', event => {
@@ -93,13 +97,20 @@ ipcMain.on('my-shared-store-updated', event => {
         Object.values(SpaceWindows)
             .filter(w => w.webContents !== event.sender)
             .forEach(w => {
-                w.webContents.send('your-shared-store-updated');
+                w.webContents.send('shared-store-updated');
             });
     }
 });
 
 app.on('ready', onAppReady);
-app.on('window-all-closed', () => !is.macos && app.quit());
+
+app.on('before-quit', () => {
+    quitting = true;
+});
+app.on('window-all-closed', () => {
+    storage.setSpacesOpen([]);
+    !is.macos && app.quit();
+});
 
 // darwin only
 app.on('activate', () => SpaceWindows && Object.keys(SpaceWindows).length === 0 && onAppReady());

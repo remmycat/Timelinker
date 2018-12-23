@@ -15,23 +15,13 @@ class SharedElectronStore extends ElectronStore {
     }
 }
 
-const SpaceEvents = new EventEmitter();
-
-function forwardIpc(ipcEvent, spaceEvent) {
-    ipc.on(ipcEvent, (...args) => {
-        SpaceEvents.emit(spaceEvent || ipcEvent, ...args);
-    });
-}
-
-forwardIpc('your-shared-store-updated', 'shared-store-updated');
-
 window.Injected = {
     API,
     Metadata: { ...Metadata },
     env: { ...is },
     SpaceStore: new ElectronStore(StoreConfigs.SpaceStore),
     SharedStore: new SharedElectronStore(StoreConfigs.SharedStore),
-    SpaceEvents,
+    SpaceEvents: ipc,
     Logs: {},
 };
 

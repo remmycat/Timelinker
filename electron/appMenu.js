@@ -1,7 +1,11 @@
-const { Menu, app, shell } = require('electron');
+const { Menu, app, shell, BrowserWindow } = require('electron');
 const { is, aboutMenu } = require('electron-util');
 
-module.exports = () => {
+function sendMenuEvent(eventType, focusedWindow = BrowserWindow.getFocusedWindow()) {
+    focusedWindow && focusedWindow.webContents.send(`menu__${eventType}`);
+}
+
+module.exports = ({ addNewWindow }) => {
     const template = [
         is.macos && {
             label: app.getName(),
@@ -35,6 +39,30 @@ module.exports = () => {
                 },
                 {
                     role: 'quit',
+                },
+            ],
+        },
+        {
+            label: 'Space',
+            submenu: [
+                {
+                    label: 'New Column',
+                    accelerator: 'CmdOrCtrl+N',
+                    click: (item, focusedWindow) => sendMenuEvent('new-column', focusedWindow),
+                },
+                {
+                    label: 'Control / Arrange Columns',
+                    accelerator: 'CmdOrCtrl+P',
+                    click: (item, focusedWindow) =>
+                        sendMenuEvent('control-arrange-columns', focusedWindow),
+                },
+                {
+                    type: 'separator',
+                },
+                {
+                    label: 'Open New Space',
+                    accelerator: 'CmdOrCtrl+O',
+                    click: () => addNewWindow(),
                 },
             ],
         },
@@ -82,30 +110,18 @@ module.exports = () => {
                 {
                     label: 'Reload',
                     accelerator: 'CmdOrCtrl+R',
-                    click: function(item, focusedWindow) {
-                        if (focusedWindow) focusedWindow.reload();
-                    },
+                    click: (item, focusedWindow) => focusedWindow && focusedWindow.reload(),
                 },
                 {
                     label: 'Toggle Full Screen',
-                    accelerator: (function() {
-                        if (is.macos) return 'Ctrl+Command+F';
-                        else return 'F11';
-                    })(),
-                    click: function(item, focusedWindow) {
-                        if (focusedWindow)
-                            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-                    },
+                    accelerator: is.macos ? 'Ctrl+Command+F' : 'F11',
+                    click: (item, focusedWindow) =>
+                        focusedWindow && focusedWindow.setFullScreen(!focusedWindow.isFullScreen()),
                 },
                 {
                     label: 'Toggle Developer Tools',
-                    accelerator: (function() {
-                        if (is.macos) return 'Alt+Command+I';
-                        else return 'Ctrl+Shift+I';
-                    })(),
-                    click: function(item, focusedWindow) {
-                        if (focusedWindow) focusedWindow.toggleDevTools();
-                    },
+                    accelerator: is.macos ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+                    click: (item, focusedWindow) => focusedWindow && focusedWindow.toggleDevTools(),
                 },
             ],
         },
@@ -122,6 +138,13 @@ module.exports = () => {
                     label: 'Close',
                     accelerator: 'CmdOrCtrl+W',
                     role: 'close',
+                },
+                {
+                    type: 'separator',
+                },
+                {
+                    label: 'Bring All to Front',
+                    role: 'front',
                 },
                 ...(is.macos
                     ? [
@@ -142,9 +165,7 @@ module.exports = () => {
             submenu: [
                 {
                     label: 'Join Telegram Feedback Group',
-                    click: function() {
-                        shell.openExternal('https://t.me/joinchat/BylIxQ-lCLabrpPcBkojPw');
-                    },
+                    click: () => shell.openExternal('https://t.me/joinchat/BylIxQ-lCLabrpPcBkojPw'),
                 },
             ],
         },
