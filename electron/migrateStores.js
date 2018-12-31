@@ -24,19 +24,16 @@ module.exports = function runMigrations(cwd, globMap) {
         Object.keys(migration).forEach(key => {
             if (!globMap[key]) return;
             const migrate = migration[key];
-            glob(globMap[key], { cwd, realpath: true }, (err, matches) => {
-                if (err) throw err;
-
-                matches.forEach(m => {
-                    const ext = path.extname(m);
-                    const s = new Store({
-                        cwd: path.dirname(m),
-                        name: path.basename(m, ext),
-                        fileExtension: ext.replace(/^\./, ''),
-                    });
-                    s.store = migrate(s.store);
-                    delete s;
+            const matches = glob.sync(globMap[key], { cwd, realpath: true });
+            matches.forEach(m => {
+                const ext = path.extname(m);
+                const s = new Store({
+                    cwd: path.dirname(m),
+                    name: path.basename(m, ext),
+                    fileExtension: ext.replace(/^\./, ''),
                 });
+                s.store = migrate(s.store);
+                delete s;
             });
         });
         newVersion += 1;
