@@ -19,7 +19,7 @@ const preloadWebviewPath = `file://${path.join(__dirname, 'preloadWebview.js')}`
 initElectronDL();
 
 let SpaceWindows = null;
-let quitting = false;
+let forceQuitting = false;
 
 ContextMenu();
 
@@ -30,14 +30,16 @@ console.log(`Starting electron instance`);
 function addWindow(space) {
     const win = (SpaceWindows[space.id] = createWindow(() => {
         delete SpaceWindows[space.id];
-        if (!quitting) {
+        if (!forceQuitting) {
             // only execute if not force closed.
             // case where user closes all windows is handled via window-all-closed event.
             storage.setSpacesOpen(Object.keys(SpaceWindows || {}));
+            updateMenu();
         }
     }, space.bounds));
 
     storage.setSpacesOpen(Object.keys(SpaceWindows || {}));
+    updateMenu();
 
     if (space.isFullscreen) {
         win.setFullScreen(true);
@@ -81,15 +83,22 @@ function addNewWindow() {
     addWindow(space);
 }
 
+function updateMenu() {
+    AppMenu({
+        addNewWindow,
+        openSpace: addWindow,
+        recentlyClosed: storage.getRecentlyClosedSpaces(),
+    });
+}
+
 function onAppReady() {
     SpaceWindows = {};
 
     enforceMacOSAppLocation();
 
-    AppMenu({ addNewWindow });
+    updateMenu();
     is.development && initDevtools();
-
-    storage.getSpaces().map(s => addWindow(s));
+    storage.getLastSpaces().map(s => addWindow(s));
 }
 
 ipcMain.on('my-shared-store-updated', event => {
@@ -105,12 +114,13 @@ ipcMain.on('my-shared-store-updated', event => {
 app.on('ready', onAppReady);
 
 app.on('before-quit', () => {
-    quitting = true;
+    forceQuitting = true;
 });
 app.on('window-all-closed', () => {
-    storage.setSpacesOpen([]);
-    !is.macos && app.quit();
+    if (!is.macos) {
+        app.quit();
+    }
 });
 
-// darwin only
+// macos only
 app.on('activate', () => SpaceWindows && Object.keys(SpaceWindows).length === 0 && onAppReady());

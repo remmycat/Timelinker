@@ -1,11 +1,19 @@
 const { Menu, app, shell, BrowserWindow } = require('electron');
 const { is, aboutMenu } = require('electron-util');
+const { getSpaceName } = require('./storage');
 
 function sendMenuEvent(eventType, focusedWindow = BrowserWindow.getFocusedWindow()) {
     focusedWindow && focusedWindow.webContents.send(`menu__${eventType}`);
 }
 
-module.exports = ({ addNewWindow }) => {
+function AppMenu({ addNewWindow, openSpace, recentlyClosed }) {
+    const namedSpaces = (recentlyClosed || [])
+        .map(space => ({
+            space,
+            name: getSpaceName(space),
+        }))
+        .filter(n => n.name);
+
     const template = [
         is.macos && {
             label: app.getName(),
@@ -44,6 +52,7 @@ module.exports = ({ addNewWindow }) => {
         },
         {
             label: 'Space',
+            id: 'space',
             submenu: [
                 {
                     label: 'New Column',
@@ -63,6 +72,16 @@ module.exports = ({ addNewWindow }) => {
                     label: 'Open New Space',
                     accelerator: 'CmdOrCtrl+O',
                     click: () => addNewWindow(),
+                },
+                {
+                    label: 'Open Recent',
+                    id: 'recently_opened',
+                    submenu: namedSpaces.map(({ name, space }, i) => ({
+                        label: name,
+                        click: () => openSpace(space),
+                        accelerator: i < 10 ? `Shift+CmdOrCtrl+${i}` : undefined,
+                    })),
+                    enabled: Boolean(namedSpaces.length),
                 },
             ],
         },
@@ -173,4 +192,6 @@ module.exports = ({ addNewWindow }) => {
 
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
-};
+}
+
+module.exports = AppMenu;

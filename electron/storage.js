@@ -37,10 +37,13 @@ function newSpace() {
 function setSpacesOpen(ids) {
     return AppStore.set(
         'last-opened',
-        AppStore.get('last-opened', []).map(space => ({
-            ...space,
-            isOpen: ids.includes(space.id),
-        }))
+        AppStore.get('last-opened', []).map(space => {
+            const isOpen = ids.includes(space.id);
+            const isOpen_changed =
+                space.isOpen !== isOpen ? String(new Date()) : space.isOpen_changed;
+
+            return { ...space, isOpen, isOpen_changed };
+        })
     );
 }
 
@@ -69,11 +72,56 @@ function addSpace() {
     return space;
 }
 
-function getSpaces() {
-    const lastOpened = AppStore.get('last-opened', [])
-        .filter(space => space.isOpen)
-        .reverse();
-    return lastOpened.length ? lastOpened : [addSpace()];
+function getSpaceName(space) {
+    const SpaceStore = new ElectronStore({
+        cwd: spacePath,
+        name: space.id,
+    });
+
+    const columns = SpaceStore.get('columns', []);
+    delete SpaceStore;
+    if (columns.length === 0) return '';
+
+    return columns
+        .map(c => new URL(c.url).hostname)
+        .reduce((acc, hostname, i) => {
+            if (acc.length === 0 || acc[acc.length - 1][0] !== hostname)
+                return [...acc, [hostname]];
+
+            acc[acc.length - 1].push(hostname);
+            return acc;
+        }, [])
+        .map(hostnames => `${hostnames[0]}${hostnames.length > 1 ? ` x${hostnames.length}` : ''}`)
+        .join(' | ');
+}
+
+function getLastSpaces() {
+    const allSpaces = AppStore.get('last-opened', []);
+
+    const sortedSpaces = allSpaces.sort((a, b) => {
+        const aDate = new Date(a.isOpen_changed);
+        const bDate = new Date(b.isOpen_changed);
+
+        return bDate - aDate;
+    });
+
+    let lastOpened = sortedSpaces.filter(s => s.isOpen);
+    if (!lastOpened.length) {
+        lastOpened = [sortedSpaces.length ? sortedSpaces[0] : addSpace()];
+    }
+
+    return lastOpened;
+}
+
+function getRecentlyClosedSpaces() {
+    return AppStore.get('last-opened', [])
+        .filter(s => !s.isOpen)
+        .sort((a, b) => {
+            const aDate = new Date(a.isOpen_changed);
+            const bDate = new Date(b.isOpen_changed);
+
+            return bDate - aDate;
+        });
 }
 
 function getStoreConfigs(id) {
@@ -91,7 +139,9 @@ function getStoreConfigs(id) {
 
 module.exports = {
     getStoreConfigs,
-    getSpaces,
+    getLastSpaces,
+    getRecentlyClosedSpaces,
+    getSpaceName,
     addSpace,
     setSpacesOpen,
     saveWindowState,
