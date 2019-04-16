@@ -27,16 +27,13 @@ export default function PresetNew({ onPresetOpen }: Props) {
         setValue(event.currentTarget.value);
     }, []);
 
-    const submit = useCallback(
-        () => {
-            const { current } = valueRef;
-            if (current) {
-                addPresetAndOpen(prependHttps(current));
-                setValue('');
-            }
-        },
-        [addPresetAndOpen]
-    );
+    const submit = useCallback(() => {
+        const { current } = valueRef;
+        if (current) {
+            addPresetAndOpen(prependHttps(current));
+            setValue('');
+        }
+    }, [addPresetAndOpen]);
 
     const handleKeyPress = useCallback(
         (e: React.KeyboardEvent<HTMLInputElement>) => {

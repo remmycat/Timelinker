@@ -12,13 +12,10 @@ export default function useDomListener<EventType>(
     inputs: Array<any> = [],
     useCapture?: boolean
 ) {
-    useEffect(
-        () => {
-            if (!ee) return;
-            const emitter = 'current' in ee ? ee.current! : ee;
-            emitter.addEventListener(eventType, listener, useCapture);
-            return () => emitter.removeEventListener(eventType, listener, useCapture);
-        },
-        [ee, ...inputs]
-    );
+    useEffect(() => {
+        if (!ee) return;
+        const emitter = 'current' in ee ? ee.current! : ee;
+        emitter.addEventListener(eventType, listener, useCapture);
+        return () => emitter.removeEventListener(eventType, listener, useCapture);
+    }, [ee, ...inputs]);
 }

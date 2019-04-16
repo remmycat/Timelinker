@@ -69,6 +69,8 @@ function addWindow(space) {
             safeDialogs: true,
             webviewTag: false,
             backgroundThrottling: true,
+            enableRemoteModule: false,
+            contextIsolation: true,
             scrollBounce: true,
             plugins: false,
             allowRunningInsecureContent: false,

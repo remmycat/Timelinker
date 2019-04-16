@@ -12,13 +12,10 @@ export default function useNodeListener<EventType>(
     listener: any,
     inputs: Array<any> = []
 ) {
-    useEffect(
-        () => {
-            if (!ee) return;
-            const emitter = 'current' in ee ? ee.current! : ee;
-            emitter.addListener(eventType, listener);
-            return () => emitter.removeListener(eventType, listener);
-        },
-        [ee, ...inputs]
-    );
+    useEffect(() => {
+        if (!ee) return;
+        const emitter = 'current' in ee ? ee.current! : ee;
+        emitter.addListener(eventType, listener);
+        return () => emitter.removeListener(eventType, listener);
+    }, [ee, ...inputs]);
 }

@@ -2,7 +2,7 @@ import React, { useMemo, useState, memo } from 'react';
 import styles from './Columns.module.scss';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd'; // eslint-disable-line
 import Column from './Column';
-import { Column as ColumnType, ColumnState } from './ColumnState';
+import { ColumnState } from './ColumnState';
 import useDragEnd from '../../hooks/useDragEnd';
 import { useDispatchers } from '../AppState';
 
