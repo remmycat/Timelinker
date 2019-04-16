@@ -25,12 +25,9 @@ export default function Preset({ preset, index, onPresetOpen }: Props) {
         [preset.id]
     );
 
-    const handleClick = useCallback(
-        () => {
-            onPresetOpen(preset);
-        },
-        [onPresetOpen]
-    );
+    const handleClick = useCallback(() => {
+        onPresetOpen(preset);
+    }, [onPresetOpen]);
 
     const text = cropUrl(preset.url);
 

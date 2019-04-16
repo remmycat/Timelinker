@@ -50,18 +50,15 @@ export default memo(function ColumnControls({ column, webview, setFullscreen }: 
     const [title, setTitle] = useState('');
     const [themeColor, setThemeColor] = useState<string | null>(null);
 
-    const refreshState = useCallback(
-        () => {
-            if (webContents) {
-                setLoading(webContents.isLoading());
-                setGoBack(webContents.canGoBack());
-                setGoForward(webContents.canGoForward());
-                setTitle(webContents.getTitle());
-                webContents.setZoomLevel(zoomLevel);
-            }
-        },
-        [webContents, zoomLevel]
-    );
+    const refreshState = useCallback(() => {
+        if (webContents) {
+            setLoading(webContents.isLoading());
+            setGoBack(webContents.canGoBack());
+            setGoForward(webContents.canGoForward());
+            setTitle(webContents.getTitle());
+            webContents.setZoomLevel(zoomLevel);
+        }
+    }, [webContents, zoomLevel]);
     useEffect(refreshState, [webContents]);
 
     useNodeListener<'did-start-loading'>(webContents, 'did-start-loading', () => {
