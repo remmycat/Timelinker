@@ -23,15 +23,13 @@ export default memo(function ColumnLayout({ columns, id, controlMode }: Props) {
     const contents = useMemo(
         () =>
             shownColumns.map((column, index) => (
-                <React.Fragment key={column.id}>
-                    {index !== 0 && <div className={styles.spacer} />}
-                    <Column
-                        setFullscreen={setFullscreen}
-                        controlMode={controlMode}
-                        column={column}
-                        index={index}
-                    />
-                </React.Fragment>
+                <Column
+                    setFullscreen={setFullscreen}
+                    controlMode={controlMode}
+                    column={column}
+                    key={column.id}
+                    index={index}
+                />
             )),
         [shownColumns, controlMode]
     );
