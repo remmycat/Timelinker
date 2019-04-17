@@ -4,6 +4,10 @@
     "author": {
         "name": "Remmy Stock"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/remmythical/Timelinker.git"
+    },
     "version": "1.0.0-alpha.6",
     "license": "UNLICENSED",
     "description": "A Social Timeline Column-Browser",
@@ -19,6 +23,10 @@
         "dist": "npm run build && electron-builder",
         "dist:all": "npm run build && electron-builder -mwl",
         "dist:pack": "npm run build && electron-builder --dir"
+    },
+    "engines": {
+        "node": ">=11.14.0",
+        "npm": ">=6.7.0"
     },
     "dependencies": {
         "cross-env": "^5.2.0",
