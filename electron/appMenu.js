@@ -79,7 +79,7 @@ function AppMenu({ addNewWindow, openSpace, recentlyClosed }) {
                     submenu: namedSpaces.map(({ name, space }, i) => ({
                         label: name,
                         click: () => openSpace(space),
-                        accelerator: i < 10 ? `Shift+CmdOrCtrl+${i}` : undefined,
+                        accelerator: i < 10 ? `Alt+CmdOrCtrl+${i}` : undefined,
                     })),
                     enabled: Boolean(namedSpaces.length),
                 },
