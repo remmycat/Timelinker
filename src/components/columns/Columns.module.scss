@@ -30,16 +30,6 @@ $actionRowPadding: 8px;
     margin: 0 ($spacerWidth / 2);
 }
 
-.spacer {
-    // spacer elements are not allowed to have actual width for DnD
-    // so i hacked them in by modifying .wrap and .row
-    min-width: $spacerWidth;
-    margin-left: -($spacerWidth / 2);
-    margin-right: -($spacerWidth / 2);
-    height: 100%;
-    background: 5px rgba($ace-white, 0.125);
-}
-
 .column {
     display: flex;
     flex-direction: column;
