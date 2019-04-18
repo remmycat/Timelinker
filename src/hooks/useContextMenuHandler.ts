@@ -2,8 +2,6 @@ import { ContextMenuParams, MenuItemConstructorOptions, WebviewTag, WebContents 
 import { electron, env, API } from '../Injected';
 import { useMemo } from 'react';
 
-const { Menu, getCurrentWindow } = electron.remote;
-
 type MenuTemplate = MenuItemConstructorOptions[];
 
 const Separator: MenuItemConstructorOptions = { type: 'separator' };
@@ -25,11 +23,6 @@ function makeMenuTemplate(
     }, []);
 }
 
-function openContextMenu(template: MenuItemConstructorOptions[]) {
-    const menu = Menu.buildFromTemplate(template);
-    menu.popup({ window: getCurrentWindow() });
-}
-
 export default function useContextMenuHandler(webview?: WebviewTag, webContents?: WebContents) {
     return useMemo(() => {
         if (!webview || !webContents) return () => {};
@@ -49,7 +42,7 @@ export default function useContextMenuHandler(webview?: WebviewTag, webContents?
             }: ContextMenuParams
         ) => {
             const hasText = selectionText.trim().length > 0;
-            openContextMenu(
+            API.openContextMenu(
                 makeMenuTemplate([
                     [
                         {
@@ -136,7 +129,7 @@ export default function useContextMenuHandler(webview?: WebviewTag, webContents?
                         {
                             id: 'inspect',
                             label: 'Inspect Element',
-                            enabled: env.development,
+                            visible: env.development,
                             click() {
                                 webview.inspectElement(x, y);
                                 if (webContents.isDevToolsOpened()) {
