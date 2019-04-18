@@ -1,4 +1,9 @@
 const { app, ipcMain, BrowserWindow } = require('electron');
+const { enforceMacOSAppLocation, is } = require('electron-util');
+// use different user data path during development, to prevent data loss.
+// electron-util is safe to call, as it doesn't reference the userData path on require
+if (is.development) app.setPath('userData', `${app.getPath('userData')} dev`);
+
 const createWindow = require('./createWindow');
 const initDevtools = require('./initDevtools');
 const storage = require('./storage');
@@ -6,7 +11,6 @@ const path = require('path');
 const injectedAPI = require('./injectedAPI');
 const ReactApp = require('./ReactApp');
 const initElectronDL = require('electron-dl');
-const { enforceMacOSAppLocation, is } = require('electron-util');
 const AppMenu = require('./appMenu.js');
 
 const preloadWebviewPath = `file://${path.join(__dirname, 'preloadWebview.js')}`;
