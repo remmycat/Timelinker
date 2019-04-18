@@ -37,6 +37,9 @@ export default memo(function ColumnControls({ column, webview, setFullscreen }: 
     const presetDispatchers = Dispatchers.Preset;
 
     const webContents = useMemo<WebContents | undefined>(
+        // webview.getWebContents() is only available after dom is ready.
+        // We know it is here, because we wait for the dom-ready event
+        // before passing back the webview ref in BrowserView.tsx
         () => webview && webview.getWebContents(),
         [webview]
     );

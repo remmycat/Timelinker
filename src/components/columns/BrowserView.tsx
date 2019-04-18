@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState, Dispatch, SetStateAction, useEffect, useRef } from 'react';
+import React, { memo, useMemo, useState, Dispatch, SetStateAction, useRef } from 'react';
 import styles from './BrowserView.module.scss';
 import { AlertTriangle } from 'react-feather';
 import useDomListener from '../../hooks/useDomListener';
@@ -48,7 +48,9 @@ export default memo(function BrowserView({ url, id, mobile, setWebview }: Props)
         if (!env.macos) viewRef.current!.insertCSS(hideScrollbarCss);
     });
 
-    useEffect(() => setWebview(viewRef.current!), []);
+    useDomListener<'dom-ready'>(viewRef, 'dom-ready', () => {
+        setWebview(viewRef.current!);
+    });
 
     useDomListener<'did-start-loading'>(viewRef, 'did-start-loading', () => setErrorData(null));
     return (
