@@ -8,7 +8,6 @@ const ReactApp = require('./ReactApp');
 const initElectronDL = require('electron-dl');
 const { enforceMacOSAppLocation, is } = require('electron-util');
 const AppMenu = require('./appMenu.js');
-const ContextMenu = require('electron-context-menu');
 
 const preloadWebviewPath = `file://${path.join(__dirname, 'preloadWebview.js')}`;
 
@@ -20,8 +19,6 @@ initElectronDL();
 
 let SpaceWindows = null;
 let forceQuitting = false;
-
-ContextMenu();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

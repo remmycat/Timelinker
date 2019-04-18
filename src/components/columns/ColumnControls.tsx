@@ -17,6 +17,7 @@ import styles from './Columns.module.scss';
 import { useDispatchers } from '../AppState';
 import { WebviewTag } from 'electron';
 import { Logs, API } from '../../Injected';
+import useContextMenuHandler from '../../hooks/useContextMenuHandler';
 
 type Props = {
     column: Column;
@@ -40,6 +41,8 @@ export default memo(function ColumnControls({ column, webview, setFullscreen }: 
         [webview]
     );
 
+    const contextMenuHandler = useContextMenuHandler(webview, webContents);
+
     const zoomLevel = column.zoomLevel || browser_zoomLevel;
 
     // Initial states are a guess, but it doesn't really matter:
@@ -60,6 +63,8 @@ export default memo(function ColumnControls({ column, webview, setFullscreen }: 
         }
     }, [webContents, zoomLevel]);
     useEffect(refreshState, [webContents]);
+
+    useNodeListener<'context-menu'>(webContents, 'context-menu', contextMenuHandler);
 
     useNodeListener<'did-start-loading'>(webContents, 'did-start-loading', () => {
         setLoading(true);

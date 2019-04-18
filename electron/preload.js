@@ -1,4 +1,5 @@
-const { remote, webFrame, ipcRenderer: ipc } = require('electron');
+const electron = require('electron');
+const { remote, webFrame, ipcRenderer: ipc } = electron;
 const ElectronStore = require('electron-store');
 const { is } = require('electron-util');
 const { EventEmitter } = require('events');
@@ -16,11 +17,14 @@ class SharedElectronStore extends ElectronStore {
 }
 
 window.Injected = {
+    electron,
     API,
     Metadata: { ...Metadata },
     env: { ...is },
-    SpaceStore: new ElectronStore(StoreConfigs.SpaceStore),
-    SharedStore: new SharedElectronStore(StoreConfigs.SharedStore),
+    Stores: {
+        SpaceStore: new ElectronStore(StoreConfigs.SpaceStore),
+        SharedStore: new SharedElectronStore(StoreConfigs.SharedStore),
+    },
     SpaceEvents: ipc,
     Logs: {},
 };

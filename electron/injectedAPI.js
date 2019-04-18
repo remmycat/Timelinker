@@ -1,5 +1,5 @@
 const url = require('url');
-const { shell } = require('electron');
+const { shell, Menu } = require('electron');
 
 module.exports = win => ({
     openURL(givenURL) {
@@ -9,5 +9,9 @@ module.exports = win => ({
             return true;
         }
         return false;
+    },
+    openContextMenu(template) {
+        const menu = Menu.buildFromTemplate(template);
+        menu.popup({ window: win });
     },
 });

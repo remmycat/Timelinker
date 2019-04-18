@@ -3726,14 +3726,6 @@ electron-builder@^20.39.0:
     update-notifier "^2.5.0"
     yargs "^13.2.1"
 
-electron-context-menu@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/electron-context-menu/-/electron-context-menu-0.12.0.tgz#ee882a3e9bf219df0e0b9473ca041ef40940fccd"
-  integrity sha512-kZEPG3a864UQOZDJnfsVUiWjhonIpfPPtH8Z7luvPUf7sra/Sz1x2n3aRnyzGN8jQhgRvQomJg/QKXHNbZZ/+g==
-  dependencies:
-    electron-dl "^1.2.0"
-    electron-is-dev "^1.0.1"
-
 electron-devtools-installer@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/electron-devtools-installer/-/electron-devtools-installer-2.2.4.tgz#261a50337e37121d338b966f07922eb4939a8763"
@@ -3744,7 +3736,7 @@ electron-devtools-installer@^2.2.4:
     rimraf "^2.5.2"
     semver "^5.3.0"
 
-electron-dl@^1.14.0, electron-dl@^1.2.0:
+electron-dl@^1.14.0:
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/electron-dl/-/electron-dl-1.14.0.tgz#1466f1b945664ca3d784268307c2b935728177bf"
   integrity sha512-4okyei42a1mLsvLK7hLrIfd20EQzB18nIlLTwBV992aMSmTGLUEFRTmO1MfSslGNrzD8nuPuy1l/VxO8so4lig==
