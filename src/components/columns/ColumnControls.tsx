@@ -1,10 +1,11 @@
-import React, { useCallback, useState, useEffect, useMemo, memo } from 'react';
+import React, { useCallback, useState, useEffect, useMemo, memo, useRef } from 'react';
 import {
     WebContents,
     ConsoleMessageEvent,
     PageFaviconUpdatedEvent,
     NewWindowEvent,
     PageTitleUpdatedEvent,
+    DidChangeThemeColorEvent,
 } from 'electron';
 import useContrastColor from '../../hooks/useContrastColor';
 import { X, RefreshCw, Home, XCircle, ArrowLeft, ArrowRight, ZoomIn, ZoomOut } from 'react-feather';
@@ -36,13 +37,12 @@ export default memo(function ColumnControls({ column, webview, setFullscreen }: 
     const columnDispatchers = Dispatchers.Column;
     const presetDispatchers = Dispatchers.Preset;
 
-    const webContents = useMemo<WebContents | undefined>(
-        // webview.getWebContents() is only available after dom is ready.
-        // We know it is here, because we wait for the dom-ready event
-        // before passing back the webview ref in BrowserView.tsx
-        () => webview && webview.getWebContents(),
-        [webview]
-    );
+    const webContentsRef = useRef<WebContents | undefined>(undefined);
+    const webContents = webContentsRef.current;
+
+    useDomListener<'dom-ready'>(webview, 'dom-ready', () => {
+        webContentsRef.current = webview!.getWebContents();
+    });
 
     const contextMenuHandler = useContextMenuHandler(webview, webContents);
 
@@ -79,11 +79,6 @@ export default memo(function ColumnControls({ column, webview, setFullscreen }: 
     useNodeListener<
         'did-navigate-in-page'
     >(webContents, 'did-navigate-in-page', refreshState, [refreshState]);
-    useNodeListener<
-        'did-change-theme-color'
-    >(webContents, 'did-change-theme-color', (_: any, color: string | null) => {
-        setThemeColor(color);
-    });
 
     useDomListener<'console-message'>(webview, 'console-message', (e: ConsoleMessageEvent) => {
         if (!Logs[id]) Logs[id] = [];
@@ -113,6 +108,12 @@ export default memo(function ColumnControls({ column, webview, setFullscreen }: 
     );
 
     useDomListener(webview, 'page-title-updated', (e: PageTitleUpdatedEvent) => setTitle(e.title));
+
+    useDomListener<
+        'did-change-theme-color'
+    >(webview, 'did-change-theme-color', (event: DidChangeThemeColorEvent) => {
+        setThemeColor(event.themeColor);
+    });
 
     const removeColumn = useCallback(() => columnDispatchers.removeColumn(id), [id]);
     const loadHome = useCallback(() => webContents!.loadURL(column.url), [
