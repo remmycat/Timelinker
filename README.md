@@ -1,3 +1,11 @@
+# Update 2022: Please don't use this app in its current state!
+
+While I tried to keep this as secure as possible at the time (by relying on webview/iframe sandboxing and the fact that the visited URLs are mostly trusted), there are still a bunch of security dangers with maintaining any kind of browser, most of which I'm probably not even aware of.
+
+However, the biggest one is that browsers need to be kept as up-to-date as possible to stay secure due to vulnerabilites that get found and patched.
+
+This app hasn't been updated in years, so it's running on outdated versions of Electron, Chromium, and other dependencies.
+
 # Timelinker
 
 ### A column-browser for your social timelines
